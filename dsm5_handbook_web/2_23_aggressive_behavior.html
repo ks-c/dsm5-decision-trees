@@ -1,0 +1,252 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2.23 攻击行为</title>
+    <style>
+        :root { --primary-color: #005A9C; --secondary-color: #6c757d; --success-color: #198754; --danger-color: #dc3545; --info-color: #0dcaf0;
+            --light-bg: #f0f2f5; --border-color: #d9d9d9; --text-color: #333; --white-color: #ffffff;
+        }
+        body {
+            font-family: "PingFang SC", "Helvetica Neue", Helvetica, Arial, "Microsoft Yahei", sans-serif;
+            background-color: var(--light-bg); color: var(--text-color); margin: 0; padding: 2rem;
+            display: flex; justify-content: center;
+        }
+        .main-container {
+            width: 100%; max-width: 900px; background-color: var(--white-color);
+            border: 1px solid var(--border-color); border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+        header {
+             background-color: var(--primary-color); color: var(--white-color); padding: 1.5rem 2rem;
+             border-top-left-radius: 8px; border-top-right-radius: 8px;
+        }
+        header h1 { font-size: 1.75rem; margin: 0; }
+        .content-wrapper { padding: 2rem; }
+        .history-container { margin-bottom: 2rem; }
+        .history-container h2 {
+            font-size: 1.1rem; color: var(--secondary-color); border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.5rem; margin-bottom: 1rem;
+        }
+        #history-log {
+            list-style-type: none; padding-left: 0; margin: 0;
+            font-size: 0.95rem; max-height: 300px; overflow-y: auto;
+        }
+        .log-item {
+            display: flex; align-items: flex-start; margin-bottom: 1rem;
+        }
+        .step-number {
+            font-weight: bold; color: var(--primary-color); background-color: #e6f7ff; border-radius: 50%;
+            width: 24px; height: 24px; min-width: 24px;
+            display: inline-flex; align-items: center; justify-content: center; margin-right: 12px;
+        }
+        .log-content { flex-grow: 1; }
+        .question-text { color: #333; display: block; }
+        .choice-section {
+            margin-top: 0.5rem; display: flex; align-items: center; flex-wrap: wrap;
+        }
+        .choice-text {
+            font-weight: bold; padding: 2px 8px; border-radius: 4px; color: white;
+        }
+        .choice-yes { background-color: var(--success-color); }
+        .choice-no { background-color: var(--danger-color); }
+        .remark-text {
+            margin-left: 10px; padding: 4px 8px; background-color: #eee;
+            border-radius: 4px; font-style: italic; color: #555;
+            border-left: 3px solid var(--secondary-color);
+        }
+        .log-connector {
+            width: 100%; text-align: center; color: var(--border-color);
+            font-size: 1.5rem; line-height: 0.5; margin-bottom: 0.5rem;
+        }
+        .final-result-log {
+            background-color: #e6f7ff; border: 1px solid #91d5ff; padding: 1rem;
+            border-radius: 4px; font-weight: bold; color: var(--primary-color);
+            margin-top: -1rem;
+        }
+        .flowchart-step fieldset {
+            border: 2px solid var(--primary-color); border-radius: 6px; padding: 1.5rem; background-color: #f8f9fa;
+        }
+        .flowchart-step legend {
+            font-weight: bold; padding: 0 0.5em; font-size: 1.1rem; color: var(--primary-color);
+        }
+        #node-display {
+            font-size: 1.3rem; line-height: 1.6; min-height: 100px; display: flex;
+            align-items: center; justify-content: center; text-align: center; margin-bottom: 1rem;
+        }
+        .remark-input-container { margin-bottom: 1.5rem; text-align: center; }
+        #remark-input {
+            width: 80%; padding: 8px 12px; border: 1px solid var(--border-color);
+            border-radius: 4px; font-size: 0.95rem;
+        }
+        #remark-input:focus {
+            outline: none; border-color: var(--primary-color); box-shadow: 0 0 0 2px rgba(0, 90, 156, 0.2);
+        }
+        .controls { display: flex; justify-content: space-between; }
+        .controls button, .footer-controls button {
+            font-size: 1rem; padding: 0.75rem 0; border-radius: 5px; border: 1px solid;
+            cursor: pointer; transition: all 0.2s ease-in-out; font-weight: 500; width: 48%;
+        }
+        #yes-btn { background-color: var(--success-color); color: var(--white-color); border-color: var(--success-color); }
+        #no-btn { background-color: var(--danger-color); color: var(--white-color); border-color: var(--danger-color);}
+        #yes-btn:hover { background-color: #157347; border-color: #146c43; }
+        #no-btn:hover { background-color: #bb2d3b; border-color: #b02a37; }
+        .footer-controls {
+            margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--border-color);
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .footer-controls .btn-group { display: flex; gap: 1rem; flex-wrap: wrap; }
+        .footer-controls button { width: auto; padding: 0.5rem 1.2rem; }
+        #back-btn, #restart-btn { background-color: var(--white-color); color: var(--secondary-color); border-color: var(--secondary-color); }
+        #export-btn { background-color: var(--white-color); color: var(--info-color); border-color: var(--info-color); }
+        #back-btn:hover, #restart-btn:hover { background-color: #e9ecef; }
+        #export-btn:hover { background-color: #cff4fc; }
+        #back-btn:disabled, #export-btn:disabled { background-color: #e9ecef; cursor: not-allowed; opacity: 0.7; border-color: var(--border-color); color: var(--secondary-color); }
+        .footer-controls a { color: var(--primary-color); text-decoration: none; font-size: 0.9rem; }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <header><h1>2.23 攻击行为</h1></header>
+        <div class="content-wrapper">
+            <div class="history-container">
+                <h2>诊断路径</h2>
+                <ul id="history-log"><li>开始诊断...</li></ul>
+            </div>
+            <div id="flowchart-container">
+                <div class="flowchart-step">
+                    <fieldset>
+                        <legend>当前步骤</legend>
+                        <div id="node-display"></div>
+                        <div id="remark-container" class="remark-input-container">
+                            <input type="text" id="remark-input" placeholder="添加备注 (可选)">
+                        </div>
+                        <div id="controls" class="controls">
+                            <button id="no-btn">否 (No)</button>
+                            <button id="yes-btn">是 (Yes)</button>
+                        </div>
+                    </fieldset>
+                </div>
+            </div>
+            <div class="footer-controls">
+                <div class="btn-group">
+                    <button id="back-btn">上一步</button>
+                    <button id="restart-btn">重新开始</button>
+                    <button id="export-btn">导出诊断报告</button>
+                </div>
+                <a href="index.html">返回主索引</a>
+            </div>
+        </div>
+    </div>
+    <script>
+        const treeData = [{"id": "start", "type": "question", "text": "由于某种物质(包括药物)的生理效应所致", "yes_target": "q1_sub", "no_target": "q2"}, {"id": "q1_sub", "type": "question", "text": "与注意和意识的紊乱有关, 以波动性病程为特征", "yes_target": "result_substance_delirium", "no_target": "result_substance_neurocognitive"}, {"id": "result_substance_delirium", "type": "result", "text": "诊断: 物质中毒性谵妄, 物质戒断性谵妄, 药物所致的谵妄 (3.16.1)"}, {"id": "result_substance_neurocognitive", "type": "result", "text": "诊断: 物质/药物所致的重度或轻度神经认知障碍(3.16.2), 伴行为紊乱"}, {"id": "q2", "type": "question", "text": "由于某种一般躯体疾病的生理效应所致", "yes_target": "q2_sub", "no_target": "q3"}, {"id": "q2_sub", "type": "question", "text": "与注意和意识的紊乱有关, 以波动性病程为特征", "yes_target": "result_somatic_delirium", "no_target": "q2_sub2"}, {"id": "result_somatic_delirium", "type": "result", "text": "诊断: 由于其他躯体疾病所致的谵妄(3.16.1)"}, {"id": "q2_sub2", "type": "question", "text": "与以下一个或更多认知领域下降的证据有关", "yes_target": "result_somatic_neurocognitive", "no_target": "q2_sub3"}, {"id": "result_somatic_neurocognitive", "type": "result", "text": "诊断: 由于其他躯体疾病所致的重度或轻度神经认知障碍(3.16.2), 伴行为紊乱"}, {"id": "q2_sub3", "type": "question", "text": "代表了与先前人格模式相比发生的变化", "yes_target": "result_somatic_personality_change", "no_target": "result_other_somatic_psychiatric"}, {"id": "result_somatic_personality_change", "type": "result", "text": "诊断: 由于其他躯体疾病所致的人格改变(3.17.11), 攻击型"}, {"id": "result_other_somatic_psychiatric", "type": "result", "text": "诊断: 由于其他躯体疾病所致的其他特定的精神障碍"}, {"id": "q3", "type": "question", "text": "发生在妄想或幻觉的背景下", "yes_target": "result_psychotic_ref", "no_target": "q4"}, {"id": "result_psychotic_ref", "type": "result", "text": "诊断: 精神病性障碍 [如精神分裂症(3.2.1)]。参见用于鉴别诊断的妄想(2.5)或幻觉(2.6)树形图"}, {"id": "q4", "type": "question", "text": "激越与至少两个典型的紧张症症状有关(如置僵、蜡样屈曲、作态、刻板运动、模仿言语)", "yes_target": "result_catatonia_ref", "no_target": "q5"}, {"id": "result_catatonia_ref", "type": "result", "text": "诊断: 紧张症 [参见用于鉴别诊断的紧张症症状树形图(2.7)]"}, {"id": "q5", "type": "question", "text": "发生在心境高涨的背景下", "yes_target": "result_bipolar_mania", "no_target": "q6"}, {"id": "result_bipolar_mania", "type": "result", "text": "诊断: 在双相I型障碍(3.3.1)或分裂情感性障碍(3.2.2)中的躁狂发作"}, {"id": "q6", "type": "question", "text": "作为一种侵犯他人基本权利并违背与年龄相符的社会规范的模式的一部分", "yes_target": "q6_sub", "no_target": "result_conduct_disorder"}, {"id": "q6_sub", "type": "question", "text": "超过18岁", "yes_target": "result_apd", "no_target": "result_conduct_disorder"}, {"id": "result_apd", "type": "result", "text": "诊断: 反社会型人格障碍(3.17.4)"}, {"id": "result_conduct_disorder", "type": "result", "text": "诊断: 品行障碍(3.14.3)"}, {"id": "q7", "type": "question", "text": "作为一种以发怒、心境失调和身份紊乱为特征的持续人格模式表现的一部分", "yes_target": "result_bpd", "no_target": "q8"}, {"id": "result_bpd", "type": "result", "text": "诊断: 边缘型人格障碍(3.17.5)"}, {"id": "q8", "type": "question", "text": "存在严重的脾气爆发, 与所处情境完全不成比例, 伴有爆发间期的持续性愤怒和易激惹", "yes_target": "result_disruptive_mood", "no_target": "q9"}, {"id": "result_disruptive_mood", "type": "result", "text": "诊断: 破坏性心境失调障碍(3.4.4)"}, {"id": "q9", "type": "question", "text": "发生与一种争辩、对抗和报复的模式有关", "yes_target": "result_odd", "no_target": "q10"}, {"id": "result_odd", "type": "result", "text": "诊断: 对立违抗障碍(3.14.1)"}, {"id": "q10", "type": "question", "text": "发生与持续的多动、冲动和注意力不集中症状有关", "yes_target": "q10_sub", "no_target": "q11"}, {"id": "q10_sub", "type": "question", "text": "发生在至少两种不同的场合并引起有临床意义的损害, 在12岁之前就有若干症状", "yes_target": "result_adhd", "no_target": "q11"}, {"id": "result_adhd", "type": "result", "text": "诊断: 注意缺陷/多动障碍(3.1.4)"}, {"id": "q11", "type": "question", "text": "作为对与主要依恋对象分离的反应出现", "yes_target": "result_separation_anxiety", "no_target": "q12"}, {"id": "result_separation_anxiety", "type": "result", "text": "诊断: 分离焦虑障碍(3.5.1)"}, {"id": "q12", "type": "question", "text": "发生与持续的社交互动上的持续缺陷有关, 伴有受限、重复的行为、兴趣或活动模式", "yes_target": "result_autism_spectrum", "no_target": "q13"}, {"id": "result_autism_spectrum", "type": "result", "text": "诊断: 自闭症谱系障碍(3.1.3)"}, {"id": "q13", "type": "question", "text": "发生与智力功能缺陷, 伴有适应功能缺陷, 并起病于发育期", "yes_target": "result_intellectual_disability", "no_target": "q14"}, {"id": "result_intellectual_disability", "type": "result", "text": "诊断: 智力障碍(3.1.1)"}, {"id": "q14", "type": "question", "text": "发生在攻击行为的发作完全与所处情境不成比例的背景下", "yes_target": "result_ied", "no_target": "q15"}, {"id": "result_ied", "type": "result", "text": "诊断: 间歇性暴怒障碍(3.14.2)"}, {"id": "q15", "type": "question", "text": "作为对心理社会应激源的症状反应出现", "yes_target": "q15_sub", "no_target": "q16"}, {"id": "q15_sub", "type": "question", "text": "应激源具有极端的创伤性质(如危及生命的险境)并有对创伤的反复再体验", "yes_target": "result_trauma_stressor", "no_target": "result_adjustment"}, {"id": "result_trauma_stressor", "type": "result", "text": "诊断: 创伤后应激障碍或急性应激障碍(3.7.1)"}, {"id": "result_adjustment", "type": "result", "text": "诊断: 适应障碍(3.7.2)"}, {"id": "q16", "type": "question", "text": "上述未涵盖的有临床意义的攻击行为代表了个体在心理上的功能失调", "yes_target": "result_other_disruptive", "no_target": "result_no_disorder"}, {"id": "result_other_disruptive", "type": "result", "text": "诊断: 未特定的破坏性、冲动控制及品行障碍"}, {"id": "result_no_disorder", "type": "result", "text": "结论: 非精神疾病的攻击行为(如反社会行为)"}];
+        const pageTitle = "2.23 攻击行为";
+        const startNodeId = 'start';
+        let currentNode;
+        let history = [];
+        const nodeDisplay = document.getElementById('node-display');
+        const flowchartContainer = document.getElementById('flowchart-container');
+        const controlsDiv = document.getElementById('controls');
+        const remarkContainer = document.getElementById('remark-container');
+        const remarkInput = document.getElementById('remark-input');
+        const yesBtn = document.getElementById('yes-btn');
+        const noBtn = document.getElementById('no-btn');
+        const backBtn = document.getElementById('back-btn');
+        const restartBtn = document.getElementById('restart-btn');
+        const exportBtn = document.getElementById('export-btn');
+        const historyLog = document.getElementById('history-log');
+        function findNodeById(id) { return treeData.find(node => node.id === id); }
+        function buildHistoryTree(path, finalNode) {
+            if (path.length === 0 && !finalNode) { return '<li>开始诊断...</li>'; }
+            let html = '';
+            path.forEach((step, index) => {
+                const node = findNodeById(step.nodeId);
+                const choiceText = step.choice === 'yes' ? '是' : '否';
+                const choiceClass = step.choice === 'yes' ? 'choice-yes' : 'choice-no';
+                html += `<li class="log-item"><div class="step-number">${index + 1}</div><div class="log-content"><div class="question-text">"${node.text}"</div><div class="choice-section"><span class="choice-text ${choiceClass}">${choiceText}</span>`;
+                if (step.remark) { html += `<div class="remark-text">${step.remark}</div>`; }
+                html += `</div></div></li><div class="log-connector">↓</div>`;
+            });
+            if (finalNode && finalNode.type === 'result') { html += `<div class="final-result-log">${finalNode.text}</div>`; }
+            return html;
+        }
+        function updateHistoryDisplay() {
+            historyLog.innerHTML = buildHistoryTree(history, currentNode);
+            historyLog.scrollTop = historyLog.scrollHeight;
+        }
+        function updateButtonStates() {
+            backBtn.disabled = history.length === 0;
+            exportBtn.disabled = history.length === 0 || !currentNode || currentNode.type !== 'result';
+        }
+        function showNode(nodeId) {
+            currentNode = findNodeById(nodeId);
+            if (!currentNode) {
+                nodeDisplay.textContent = '错误：未找到节点 ' + nodeId;
+                flowchartContainer.style.display = 'none';
+                return;
+            }
+            updateHistoryDisplay();
+            updateButtonStates();
+            if (currentNode.type === 'question') {
+                nodeDisplay.textContent = currentNode.text;
+                flowchartContainer.style.display = 'block';
+            } else {
+                flowchartContainer.style.display = 'none';
+            }
+        }
+        function makeChoice(isYes) {
+            if (!currentNode) return;
+            const choice = isYes ? 'yes' : 'no';
+            const remark = remarkInput.value.trim();
+            history.push({ nodeId: currentNode.id, choice: choice, remark: remark });
+            remarkInput.value = '';
+            const nextNodeId = isYes ? currentNode.yes_target : currentNode.no_target;
+            showNode(nextNodeId);
+        }
+        function generateReportText() {
+            let report = `DSM-5® 鉴别诊断报告\n====================================\n`;
+            report += `决策树: ${pageTitle}\n生成时间: ${new Date().toLocaleString('zh-CN')}\n====================================\n\n`;
+            history.forEach((step, index) => {
+                const node = findNodeById(step.nodeId);
+                const choiceText = step.choice === 'yes' ? '是' : '否';
+                report += `步骤 ${index + 1}: \n  - 问题: ${node.text}\n  - 选择: ${choiceText}\n`;
+                if (step.remark) { report += `  - 备注: ${step.remark}\n`; }
+                report += `\n`;
+            });
+            if (currentNode && currentNode.type === 'result') { report += `最终诊断/结论:\n  - ${currentNode.text}\n`; }
+            return report;
+        }
+        function exportReport() {
+            if (exportBtn.disabled) return;
+            const reportText = generateReportText();
+            const blob = new Blob([reportText], { type: 'text/plain;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+            a.download = `DSM5_Report_${timestamp}.txt`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+        yesBtn.addEventListener('click', () => makeChoice(true));
+        noBtn.addEventListener('click', () => makeChoice(false));
+        exportBtn.addEventListener('click', exportReport);
+        backBtn.addEventListener('click', () => {
+            if (history.length > 0) {
+                const lastStep = history.pop();
+                showNode(lastStep.nodeId);
+                remarkInput.value = lastStep.remark || '';
+            }
+        });
+        restartBtn.addEventListener('click', () => {
+            history = [];
+            remarkInput.value = '';
+            showNode(startNodeId);
+        });
+        showNode(startNodeId);
+    </script>
+</body>
+</html>

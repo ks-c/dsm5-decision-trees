@@ -1,0 +1,252 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2.28 认知损害</title>
+    <style>
+        :root { --primary-color: #005A9C; --secondary-color: #6c757d; --success-color: #198754; --danger-color: #dc3545; --info-color: #0dcaf0;
+            --light-bg: #f0f2f5; --border-color: #d9d9d9; --text-color: #333; --white-color: #ffffff;
+        }
+        body {
+            font-family: "PingFang SC", "Helvetica Neue", Helvetica, Arial, "Microsoft Yahei", sans-serif;
+            background-color: var(--light-bg); color: var(--text-color); margin: 0; padding: 2rem;
+            display: flex; justify-content: center;
+        }
+        .main-container {
+            width: 100%; max-width: 900px; background-color: var(--white-color);
+            border: 1px solid var(--border-color); border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+        header {
+             background-color: var(--primary-color); color: var(--white-color); padding: 1.5rem 2rem;
+             border-top-left-radius: 8px; border-top-right-radius: 8px;
+        }
+        header h1 { font-size: 1.75rem; margin: 0; }
+        .content-wrapper { padding: 2rem; }
+        .history-container { margin-bottom: 2rem; }
+        .history-container h2 {
+            font-size: 1.1rem; color: var(--secondary-color); border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.5rem; margin-bottom: 1rem;
+        }
+        #history-log {
+            list-style-type: none; padding-left: 0; margin: 0;
+            font-size: 0.95rem; max-height: 300px; overflow-y: auto;
+        }
+        .log-item {
+            display: flex; align-items: flex-start; margin-bottom: 1rem;
+        }
+        .step-number {
+            font-weight: bold; color: var(--primary-color); background-color: #e6f7ff; border-radius: 50%;
+            width: 24px; height: 24px; min-width: 24px;
+            display: inline-flex; align-items: center; justify-content: center; margin-right: 12px;
+        }
+        .log-content { flex-grow: 1; }
+        .question-text { color: #333; display: block; }
+        .choice-section {
+            margin-top: 0.5rem; display: flex; align-items: center; flex-wrap: wrap;
+        }
+        .choice-text {
+            font-weight: bold; padding: 2px 8px; border-radius: 4px; color: white;
+        }
+        .choice-yes { background-color: var(--success-color); }
+        .choice-no { background-color: var(--danger-color); }
+        .remark-text {
+            margin-left: 10px; padding: 4px 8px; background-color: #eee;
+            border-radius: 4px; font-style: italic; color: #555;
+            border-left: 3px solid var(--secondary-color);
+        }
+        .log-connector {
+            width: 100%; text-align: center; color: var(--border-color);
+            font-size: 1.5rem; line-height: 0.5; margin-bottom: 0.5rem;
+        }
+        .final-result-log {
+            background-color: #e6f7ff; border: 1px solid #91d5ff; padding: 1rem;
+            border-radius: 4px; font-weight: bold; color: var(--primary-color);
+            margin-top: -1rem;
+        }
+        .flowchart-step fieldset {
+            border: 2px solid var(--primary-color); border-radius: 6px; padding: 1.5rem; background-color: #f8f9fa;
+        }
+        .flowchart-step legend {
+            font-weight: bold; padding: 0 0.5em; font-size: 1.1rem; color: var(--primary-color);
+        }
+        #node-display {
+            font-size: 1.3rem; line-height: 1.6; min-height: 100px; display: flex;
+            align-items: center; justify-content: center; text-align: center; margin-bottom: 1rem;
+        }
+        .remark-input-container { margin-bottom: 1.5rem; text-align: center; }
+        #remark-input {
+            width: 80%; padding: 8px 12px; border: 1px solid var(--border-color);
+            border-radius: 4px; font-size: 0.95rem;
+        }
+        #remark-input:focus {
+            outline: none; border-color: var(--primary-color); box-shadow: 0 0 0 2px rgba(0, 90, 156, 0.2);
+        }
+        .controls { display: flex; justify-content: space-between; }
+        .controls button, .footer-controls button {
+            font-size: 1rem; padding: 0.75rem 0; border-radius: 5px; border: 1px solid;
+            cursor: pointer; transition: all 0.2s ease-in-out; font-weight: 500; width: 48%;
+        }
+        #yes-btn { background-color: var(--success-color); color: var(--white-color); border-color: var(--success-color); }
+        #no-btn { background-color: var(--danger-color); color: var(--white-color); border-color: var(--danger-color);}
+        #yes-btn:hover { background-color: #157347; border-color: #146c43; }
+        #no-btn:hover { background-color: #bb2d3b; border-color: #b02a37; }
+        .footer-controls {
+            margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--border-color);
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .footer-controls .btn-group { display: flex; gap: 1rem; flex-wrap: wrap; }
+        .footer-controls button { width: auto; padding: 0.5rem 1.2rem; }
+        #back-btn, #restart-btn { background-color: var(--white-color); color: var(--secondary-color); border-color: var(--secondary-color); }
+        #export-btn { background-color: var(--white-color); color: var(--info-color); border-color: var(--info-color); }
+        #back-btn:hover, #restart-btn:hover { background-color: #e9ecef; }
+        #export-btn:hover { background-color: #cff4fc; }
+        #back-btn:disabled, #export-btn:disabled { background-color: #e9ecef; cursor: not-allowed; opacity: 0.7; border-color: var(--border-color); color: var(--secondary-color); }
+        .footer-controls a { color: var(--primary-color); text-decoration: none; font-size: 0.9rem; }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <header><h1>2.28 认知损害</h1></header>
+        <div class="content-wrapper">
+            <div class="history-container">
+                <h2>诊断路径</h2>
+                <ul id="history-log"><li>开始诊断...</li></ul>
+            </div>
+            <div id="flowchart-container">
+                <div class="flowchart-step">
+                    <fieldset>
+                        <legend>当前步骤</legend>
+                        <div id="node-display"></div>
+                        <div id="remark-container" class="remark-input-container">
+                            <input type="text" id="remark-input" placeholder="添加备注 (可选)">
+                        </div>
+                        <div id="controls" class="controls">
+                            <button id="no-btn">否 (No)</button>
+                            <button id="yes-btn">是 (Yes)</button>
+                        </div>
+                    </fieldset>
+                </div>
+            </div>
+            <div class="footer-controls">
+                <div class="btn-group">
+                    <button id="back-btn">上一步</button>
+                    <button id="restart-btn">重新开始</button>
+                    <button id="export-btn">导出诊断报告</button>
+                </div>
+                <a href="index.html">返回主索引</a>
+            </div>
+        </div>
+    </div>
+    <script>
+        const treeData = [{"id": "start", "type": "question", "text": "仅有记忆丧失", "yes_target": "result_memory_loss_ref", "no_target": "q2"}, {"id": "result_memory_loss_ref", "type": "result", "text": "结论: 参见用于鉴别诊断的记忆丧失树形图(2.27)"}, {"id": "q2", "type": "question", "text": "以病程波动的注意和意识的紊乱为特征", "yes_target": "q2_sub", "no_target": "q3"}, {"id": "q2_sub", "type": "question", "text": "证据表明紊乱有一种以上的病因(如一种以上的躯体疾病和物质中毒)", "yes_target": "result_multiple_etiologies_delirium", "no_target": "result_substance_or_somatic_delirium"}, {"id": "result_multiple_etiologies_delirium", "type": "result", "text": "诊断: 由于多种病因所致的谵妄(3.16.1)"}, {"id": "result_substance_or_somatic_delirium", "type": "result", "text": "诊断: 由于其他躯体疾病所致的谵妄(3.16.1)"}, {"id": "q3", "type": "question", "text": "由于某种物质(包括药物)的生理效应所致", "yes_target": "q3_sub", "no_target": "q4"}, {"id": "q3_sub", "type": "question", "text": "由药物使用所致的谵妄", "yes_target": "result_drug_induced_delirium", "no_target": "q3_sub2"}, {"id": "result_drug_induced_delirium", "type": "result", "text": "诊断: 药物所致的谵妄(3.16.1)"}, {"id": "q3_sub2", "type": "question", "text": "在物质戒断期间起病", "yes_target": "result_withdrawal_delirium", "no_target": "result_intoxication_delirium"}, {"id": "result_withdrawal_delirium", "type": "result", "text": "诊断: 物质戒断性谵妄(3.16.1)"}, {"id": "result_intoxication_delirium", "type": "result", "text": "诊断: 物质中毒性谵妄"}, {"id": "q4", "type": "question", "text": "由于某种一般躯体疾病的生理效应所致", "yes_target": "result_somatic_delirium_2", "no_target": "q5"}, {"id": "result_somatic_delirium_2", "type": "result", "text": "诊断: 由于其他躯体疾病所致的谵妄(3.16.1)"}, {"id": "q5", "type": "question", "text": "发生在精神病性紊乱持续至少1个月的背景下, 症状是存在于活跃期(即妄想、幻觉、言语瓦解、紧张症行为、阴性症状)及前驱期或残留期", "yes_target": "q5_sub", "no_target": "q6"}, {"id": "q5_sub", "type": "question", "text": "认知症状(如陈述性记忆和工作记忆、语言功能和其他执行功能)完全可以解释为一种精神病性障碍的固有特征", "yes_target": "q5_sub2", "no_target": "result_schizophrenia_with_neurocognitive"}, {"id": "q5_sub2", "type": "question", "text": "病程为6个月或以上", "yes_target": "result_schizophrenia", "no_target": "result_schizophreniform"}, {"id": "result_schizophrenia", "type": "result", "text": "诊断: 精神分裂症(3.2.1)"}, {"id": "result_schizophreniform", "type": "result", "text": "诊断: 精神分裂样障碍(3.2.1)"}, {"id": "result_schizophrenia_with_neurocognitive", "type": "result", "text": "诊断: 其他特定的谵妄, 未特定的谵妄"}, {"id": "q6", "type": "question", "text": "发生在反复的躁狂发作和重性抑郁发作的背景下", "yes_target": "q6_sub", "no_target": "q7"}, {"id": "q6_sub", "type": "question", "text": "认知症状完全可以解释为双相I型障碍的有关特征", "yes_target": "result_bipolar1", "no_target": "result_bipolar1_with_neurocognitive"}, {"id": "result_bipolar1", "type": "result", "text": "诊断: 双相 I 型障碍"}, {"id": "result_bipolar1_with_neurocognitive", "type": "result", "text": "诊断: 其他特定的谵妄, 未特定的谵妄"}, {"id": "q7", "type": "question", "text": "发生在一次抑郁心境或兴趣或者兴奋感减退的背景下, 伴有特征性的抑郁症状", "yes_target": "q7_sub", "no_target": "q8"}, {"id": "q7_sub", "type": "question", "text": "认知症状(即思考或集中注意力的能力减退)完全可以解释为重性抑郁发作", "yes_target": "result_major_depression_related", "no_target": "result_major_depression_with_neurocognitive"}, {"id": "result_major_depression_related", "type": "result", "text": "诊断: 在重性抑郁障碍(3.4.1)、双相I型障碍(3.3.1)或双相II型障碍(3.3.2)或分裂情感性障碍(3.2.2)中的重性抑郁发作"}, {"id": "result_major_depression_with_neurocognitive", "type": "result", "text": "诊断: 其他特定的谵妄, 未特定的谵妄"}, {"id": "q8", "type": "question", "text": "在至少2年的多数日子里, 抑郁心境持续存在", "yes_target": "q8_sub", "no_target": "q9"}, {"id": "q8_sub", "type": "question", "text": "认知症状(即注意力不集中或难以做决定)完全可以解释为持续性抑郁障碍", "yes_target": "result_persistent_depressive", "no_target": "result_persistent_depressive_with_neurocognitive"}, {"id": "result_persistent_depressive", "type": "result", "text": "诊断: 持续性抑郁障碍(3.4.2)"}, {"id": "result_persistent_depressive_with_neurocognitive", "type": "result", "text": "诊断: 其他特定的谵妄, 未特定的谵妄"}, {"id": "q9", "type": "question", "text": "周期性的烦躁心境在月经开始前1周出现在月经结束后的1周消失", "yes_target": "q9_sub", "no_target": "q10"}, {"id": "q9_sub", "type": "question", "text": "认知症状(即难以集中注意力)完全可以用来解释经前期烦躁来解释", "yes_target": "result_pmdd", "no_target": "result_pmdd_with_neurocognitive"}, {"id": "result_pmdd", "type": "result", "text": "诊断: 经前期烦躁障碍(3.4.3)"}, {"id": "result_pmdd_with_neurocognitive", "type": "result", "text": "诊断: 其他特定的谵妄, 未特定的谵妄"}, {"id": "q10", "type": "question", "text": "伴有其他功能的注意力不集中和/或多动/冲动症状, 在, 起病于12岁之前", "yes_target": "q10_sub", "no_target": "q11"}, {"id": "q10_sub", "type": "question", "text": "认知症状(即难以集中注意力)完全可以解释为注意缺陷/多动障碍", "yes_target": "result_adhd", "no_target": "result_adhd_with_neurocognitive"}, {"id": "result_adhd", "type": "result", "text": "诊断: 注意缺陷/多动障碍(3.1.4)"}, {"id": "result_adhd_with_neurocognitive", "type": "result", "text": "诊断: 其他特定的谵妄, 未特定的谵妄"}, {"id": "q11", "type": "question", "text": "发生在对创伤性应激源做出反应的背景下, 伴有侵入症状、回避与创伤有关的刺激、认知和心境的负性改变和反应性的改变", "yes_target": "q11_sub", "no_target": "q12"}, {"id": "q11_sub", "type": "question", "text": "认知症状(即难以集中注意力)完全可以解释创伤性应激障碍", "yes_target": "result_ptsd", "no_target": "result_ptsd_with_neurocognitive"}, {"id": "result_ptsd", "type": "result", "text": "诊断: 创伤后应激障碍(3.7.1)"}, {"id": "result_ptsd_with_neurocognitive", "type": "result", "text": "诊断: 其他特定的谵妄, 未特定的谵妄"}, {"id": "q12", "type": "question", "text": "发生在对很多事件或情境过度焦虑和担心, 持续至少6个月", "yes_target": "q12_sub", "no_target": "q13"}, {"id": "q12_sub", "type": "question", "text": "认知症状(如难以集中注意力或头脑空白)完全可以用来解释广泛性焦虑障碍", "yes_target": "result_gad", "no_target": "result_gad_with_neurocognitive"}, {"id": "result_gad", "type": "result", "text": "诊断: 广泛性焦虑障碍(3.5.7)"}, {"id": "result_gad_with_neurocognitive", "type": "result", "text": "诊断: 其他特定的谵妄, 未特定的谵妄"}, {"id": "q13", "type": "question", "text": "起病于发育期并在概念、社交和实用领域存在智力及适应功能的缺陷", "yes_target": "q13_sub", "no_target": "q14"}, {"id": "q13_sub", "type": "question", "text": "无法接受系统的智力功能评估", "yes_target": "result_global_developmental_delay", "no_target": "result_intellectual_disability_ref"}, {"id": "result_global_developmental_delay", "type": "result", "text": "诊断: 全面发育迟缓"}, {"id": "result_intellectual_disability_ref", "type": "result", "text": "结论: 参见用于鉴别诊断的记忆丧失树形图(2.27)"}, {"id": "q14", "type": "question", "text": "存在智力功能缺陷(使用临床评估和标准化测验确认)和随之出现的适应功能缺陷, 起病于发育期", "yes_target": "q14_sub", "no_target": "q15"}, {"id": "q14_sub", "type": "question", "text": "丧失先前习得的认知技能, 如在严重创伤性脑损伤中那样", "yes_target": "result_intellectual_disability_with_neurocognitive", "no_target": "result_intellectual_disability"}, {"id": "result_intellectual_disability_with_neurocognitive", "type": "result", "text": "诊断: 智力障碍(智力发育障碍)(3.1.1)"}, {"id": "result_intellectual_disability", "type": "result", "text": "诊断: 智力障碍(3.1.1)(继续确定是否还需要重度或轻度神经认知障碍的诊断)"}, {"id": "q15", "type": "question", "text": "神经心理测验或其他量化评估证实存在显著的损害, 并且支持一个体的独立性", "yes_target": "q15_sub", "no_target": "result_other_neurocognitive"}, {"id": "q15_sub", "type": "question", "text": "证据表明这种紊乱有一种以上的病因(如脑血管病和阿尔茨海默病)", "yes_target": "result_multiple_etiologies_neurocognitive_2", "no_target": "q15_sub2"}, {"id": "result_multiple_etiologies_neurocognitive_2", "type": "result", "text": "诊断: 由于多种病因所致的重度神经认知障碍(3.16.2)"}, {"id": "q15_sub2", "type": "question", "text": "隐匿起病且损害逐渐进展, 出现在已确诊的帕金森病中", "yes_target": "q15_sub2_a", "no_target": "q15_sub3"}, {"id": "q15_sub2_a", "type": "question", "text": "没有证据表明存在混合性病因, 并且病程是帕金森明确发生在神经认知障碍起病前", "yes_target": "result_parkinsons_neurocognitive", "no_target": "result_possible_parkinsons_neurocognitive"}, {"id": "result_parkinsons_neurocognitive", "type": "result", "text": "诊断: 可能由于帕金森病所致的重度神经认知障碍(首先编码G20帕金森氏病)(3.16.2)"}, {"id": "result_possible_parkinsons_neurocognitive", "type": "result", "text": "诊断: 可疑由于帕金森病所致的重度神经认知障碍(3.16.2)"}, {"id": "q15_sub3", "type": "question", "text": "症状出现在创伤性脑损伤后, 并经过急性损伤后脑症状的持续存在", "yes_target": "result_tbi_neurocognitive", "no_target": "q15_sub4"}, {"id": "result_tbi_neurocognitive", "type": "result", "text": "诊断: 由于创伤性脑损伤所致的重度神经认知障碍(3.16.2)"}, {"id": "q15_sub4", "type": "question", "text": "经证实HIV并且不能用继发性脑病如隐性球菌脑膜炎或脑球菌病来解释", "yes_target": "result_hiv_neurocognitive", "no_target": "q15_sub5"}, {"id": "result_hiv_neurocognitive", "type": "result", "text": "诊断: 由于HIV感染所致的重度神经认知障碍(首先编码B20 HIV感染)(3.16.2)"}, {"id": "q15_sub5", "type": "question", "text": "隐匿起病, 逐渐进展, 并有证据表明症状是亨廷顿氏病的直接后果", "yes_target": "result_huntingtons_neurocognitive", "no_target": "q15_sub6"}, {"id": "result_huntingtons_neurocognitive", "type": "result", "text": "诊断: 由于亨廷顿氏病所致的重度神经认知障碍(首先编码G10亨廷顿氏病)(3.16.2)"}, {"id": "q15_sub6", "type": "question", "text": "隐匿起病, 快速进展, 并有朊病毒病的生物标记物证据", "yes_target": "result_prion_neurocognitive", "no_target": "q15_sub7"}, {"id": "result_prion_neurocognitive", "type": "result", "text": "诊断: 由于朊病毒病所致的重度神经认知障碍(首先编码A81.9朊病毒病)(3.16.2)"}, {"id": "q15_sub7", "type": "question", "text": "隐匿起病, 逐渐进展, 并有行为症状(如脱抑制, 情感淡漠, 缺乏共情), 强迫行为, 口欲亢进)或语言能力的显著下降; 相对保留了学习、记忆和知觉运动的功能", "yes_target": "q15_sub7_a", "no_target": "q15_sub8"}, {"id": "q15_sub7_a", "type": "question", "text": "额颞叶神经认知障碍致病基因突变是发生成人或类似的额叶或颞叶萎缩的证据", "yes_target": "result_frontotemporal_neurocognitive", "no_target": "result_possible_frontotemporal_neurocognitive"}, {"id": "result_frontotemporal_neurocognitive", "type": "result", "text": "诊断: 可能的额颞叶神经认知障碍(首先编码额颞叶疾病)(3.16.2)"}, {"id": "result_possible_frontotemporal_neurocognitive", "type": "result", "text": "诊断: 可疑的额颞叶神经认知障碍(3.16.2)"}, {"id": "q15_sub8", "type": "question", "text": "隐匿起病且逐渐进展, 伴有以下任何一种表现: 波动性认知功能, 注意力和警觉性的显著变化, 反复出现完整的视幻觉; 出现帕金森综合征的特征表现; 快速眼动睡眠行为障碍; 或严重的神经阻滞剂敏感性", "yes_target": "q15_sub8_a", "no_target": "q15_sub9"}, {"id": "q15_sub8_a", "type": "question", "text": "有以下核心特征中的两个, 或一个核心特征和快速眼动睡眠行为障碍或一种或更多的指示性生物标记", "yes_target": "result_lewy_body_neurocognitive", "no_target": "result_possible_lewy_body_neurocognitive"}, {"id": "result_lewy_body_neurocognitive", "type": "result", "text": "诊断: 可能的重度神经认知障碍伴路易体(首先编码路易体病)(3.16.2)"}, {"id": "result_possible_lewy_body_neurocognitive", "type": "result", "text": "诊断: 可疑的重度神经认知障碍伴路易体(3.16.2)"}, {"id": "q15_sub9", "type": "question", "text": "存在脑血管病以及与血管性病因相一致的特征(如认知缺陷的起病与血管事件相关或有证据表明复杂注意和额叶执行功能显著下降)", "yes_target": "q15_sub9_a", "no_target": "q15_sub10"}, {"id": "q15_sub9_a", "type": "question", "text": "神经影像学支持脑实质的损伤是由于脑血管病所致, 神经认知综合征在时间上与一是有记录的脑血管事件相关, 或同时存在脑血管病和遗传学证据", "yes_target": "result_vascular_neurocognitive", "no_target": "result_possible_vascular_neurocognitive"}, {"id": "result_vascular_neurocognitive", "type": "result", "text": "诊断: 可能的重度血管性神经认知障碍(3.16.2)"}, {"id": "result_possible_vascular_neurocognitive", "type": "result", "text": "诊断: 可疑的重度血管性神经认知障碍(3.16.2)"}, {"id": "q15_sub10", "type": "question", "text": "隐匿起病, 在至少两个认知领域有逐渐进展的损害", "yes_target": "q15_sub10_a", "no_target": "q15_sub11"}, {"id": "q15_sub10_a", "type": "question", "text": "阿尔茨海默病的致病基因突变或在下列三项全部存在: 记忆和某个其他认知领域下降的确凿证据, 处于稳定期, 以及无证据表明存在混合性病因", "yes_target": "result_alzheimers_neurocognitive", "no_target": "result_possible_alzheimers_neurocognitive"}, {"id": "result_alzheimers_neurocognitive", "type": "result", "text": "诊断: 可能的由于阿尔茨海默病所致的重度神经认知障碍(首先编码阿尔茨海默病)(3.16.2)"}, {"id": "result_possible_alzheimers_neurocognitive", "type": "result", "text": "诊断: 可疑的由于阿尔茨海默病所致的重度神经认知障碍(3.16.2)"}, {"id": "q15_sub11", "type": "question", "text": "从病史、体格检查或实验室发现获得的其他躯体疾病(如多发性硬化症)是症状的病因", "yes_target": "result_other_somatic_neurocognitive", "no_target": "q15_sub12"}, {"id": "result_other_somatic_neurocognitive", "type": "result", "text": "诊断: 由于其他躯体疾病所致的重度神经认知障碍(首先编码躯体疾病)(3.16.2)"}, {"id": "q15_sub12", "type": "question", "text": "由某种物质的生理效应导致, 持续时间超出物质中毒或戒断的通常病程", "yes_target": "result_substance_induced_neurocognitive_2", "no_target": "result_unspecified_neurocognitive"}, {"id": "result_substance_induced_neurocognitive_2", "type": "result", "text": "诊断: 物质/药物所致的重度神经认知障碍"}, {"id": "result_unspecified_neurocognitive", "type": "result", "text": "诊断: 未特定的神经认知障碍"}, {"id": "result_other_neurocognitive", "type": "question", "text": "与已证实的表现水平相比, 个体在一个或一定的认知领域下降, 但尚未干扰日常活动的独立性", "yes_target": "q16_sub", "no_target": "q17"}, {"id": "q16_sub", "type": "question", "text": "由于某种一般躯体疾病的直接效应所致", "yes_target": "result_somatic_mild_neurocognitive", "no_target": "result_other_somatic_mild_neurocognitive"}, {"id": "result_somatic_mild_neurocognitive", "type": "result", "text": "诊断: 由于其他躯体疾病所致的轻度神经认知障碍(参见用于重度神经认知障碍的病因决策点)"}, {"id": "result_other_somatic_mild_neurocognitive", "type": "result", "text": "诊断: 未特定的神经认知障碍"}, {"id": "q17", "type": "question", "text": "由于某种物质的生理效应导致, 持续时间超出物质中毒或戒断的通常病程", "yes_target": "result_substance_induced_mild_neurocognitive", "no_target": "q18"}, {"id": "result_substance_induced_mild_neurocognitive", "type": "result", "text": "诊断: 物质/药物所致的轻度神经认知障碍"}, {"id": "q18", "type": "question", "text": "由于某种物质的直接生理效应所致", "yes_target": "result_substance_intox_withdrawal_2", "no_target": "q19"}, {"id": "result_substance_intox_withdrawal_2", "type": "result", "text": "诊断: 物质中毒, 物质戒断"}, {"id": "q19", "type": "question", "text": "有临床意义的认知损害代表了个体在心理上或生物学上的功能失调", "yes_target": "result_unspecified_neurocognitive_final", "no_target": "result_normal_cognition"}, {"id": "result_unspecified_neurocognitive_final", "type": "result", "text": "诊断: 未特定的神经认知障碍"}, {"id": "result_normal_cognition", "type": "result", "text": "结论: “正常的”认知(如健忘)"}];
+        const pageTitle = "2.28 认知损害";
+        const startNodeId = 'start';
+        let currentNode;
+        let history = [];
+        const nodeDisplay = document.getElementById('node-display');
+        const flowchartContainer = document.getElementById('flowchart-container');
+        const controlsDiv = document.getElementById('controls');
+        const remarkContainer = document.getElementById('remark-container');
+        const remarkInput = document.getElementById('remark-input');
+        const yesBtn = document.getElementById('yes-btn');
+        const noBtn = document.getElementById('no-btn');
+        const backBtn = document.getElementById('back-btn');
+        const restartBtn = document.getElementById('restart-btn');
+        const exportBtn = document.getElementById('export-btn');
+        const historyLog = document.getElementById('history-log');
+        function findNodeById(id) { return treeData.find(node => node.id === id); }
+        function buildHistoryTree(path, finalNode) {
+            if (path.length === 0 && !finalNode) { return '<li>开始诊断...</li>'; }
+            let html = '';
+            path.forEach((step, index) => {
+                const node = findNodeById(step.nodeId);
+                const choiceText = step.choice === 'yes' ? '是' : '否';
+                const choiceClass = step.choice === 'yes' ? 'choice-yes' : 'choice-no';
+                html += `<li class="log-item"><div class="step-number">${index + 1}</div><div class="log-content"><div class="question-text">"${node.text}"</div><div class="choice-section"><span class="choice-text ${choiceClass}">${choiceText}</span>`;
+                if (step.remark) { html += `<div class="remark-text">${step.remark}</div>`; }
+                html += `</div></div></li><div class="log-connector">↓</div>`;
+            });
+            if (finalNode && finalNode.type === 'result') { html += `<div class="final-result-log">${finalNode.text}</div>`; }
+            return html;
+        }
+        function updateHistoryDisplay() {
+            historyLog.innerHTML = buildHistoryTree(history, currentNode);
+            historyLog.scrollTop = historyLog.scrollHeight;
+        }
+        function updateButtonStates() {
+            backBtn.disabled = history.length === 0;
+            exportBtn.disabled = history.length === 0 || !currentNode || currentNode.type !== 'result';
+        }
+        function showNode(nodeId) {
+            currentNode = findNodeById(nodeId);
+            if (!currentNode) {
+                nodeDisplay.textContent = '错误：未找到节点 ' + nodeId;
+                flowchartContainer.style.display = 'none';
+                return;
+            }
+            updateHistoryDisplay();
+            updateButtonStates();
+            if (currentNode.type === 'question') {
+                nodeDisplay.textContent = currentNode.text;
+                flowchartContainer.style.display = 'block';
+            } else {
+                flowchartContainer.style.display = 'none';
+            }
+        }
+        function makeChoice(isYes) {
+            if (!currentNode) return;
+            const choice = isYes ? 'yes' : 'no';
+            const remark = remarkInput.value.trim();
+            history.push({ nodeId: currentNode.id, choice: choice, remark: remark });
+            remarkInput.value = '';
+            const nextNodeId = isYes ? currentNode.yes_target : currentNode.no_target;
+            showNode(nextNodeId);
+        }
+        function generateReportText() {
+            let report = `DSM-5® 鉴别诊断报告\n====================================\n`;
+            report += `决策树: ${pageTitle}\n生成时间: ${new Date().toLocaleString('zh-CN')}\n====================================\n\n`;
+            history.forEach((step, index) => {
+                const node = findNodeById(step.nodeId);
+                const choiceText = step.choice === 'yes' ? '是' : '否';
+                report += `步骤 ${index + 1}: \n  - 问题: ${node.text}\n  - 选择: ${choiceText}\n`;
+                if (step.remark) { report += `  - 备注: ${step.remark}\n`; }
+                report += `\n`;
+            });
+            if (currentNode && currentNode.type === 'result') { report += `最终诊断/结论:\n  - ${currentNode.text}\n`; }
+            return report;
+        }
+        function exportReport() {
+            if (exportBtn.disabled) return;
+            const reportText = generateReportText();
+            const blob = new Blob([reportText], { type: 'text/plain;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+            a.download = `DSM5_Report_${timestamp}.txt`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+        yesBtn.addEventListener('click', () => makeChoice(true));
+        noBtn.addEventListener('click', () => makeChoice(false));
+        exportBtn.addEventListener('click', exportReport);
+        backBtn.addEventListener('click', () => {
+            if (history.length > 0) {
+                const lastStep = history.pop();
+                showNode(lastStep.nodeId);
+                remarkInput.value = lastStep.remark || '';
+            }
+        });
+        restartBtn.addEventListener('click', () => {
+            history = [];
+            remarkInput.value = '';
+            showNode(startNodeId);
+        });
+        showNode(startNodeId);
+    </script>
+</body>
+</html>

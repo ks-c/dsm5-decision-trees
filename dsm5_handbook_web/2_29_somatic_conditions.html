@@ -1,0 +1,252 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2.29 躯体疾病作为病因</title>
+    <style>
+        :root { --primary-color: #005A9C; --secondary-color: #6c757d; --success-color: #198754; --danger-color: #dc3545; --info-color: #0dcaf0;
+            --light-bg: #f0f2f5; --border-color: #d9d9d9; --text-color: #333; --white-color: #ffffff;
+        }
+        body {
+            font-family: "PingFang SC", "Helvetica Neue", Helvetica, Arial, "Microsoft Yahei", sans-serif;
+            background-color: var(--light-bg); color: var(--text-color); margin: 0; padding: 2rem;
+            display: flex; justify-content: center;
+        }
+        .main-container {
+            width: 100%; max-width: 900px; background-color: var(--white-color);
+            border: 1px solid var(--border-color); border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+        header {
+             background-color: var(--primary-color); color: var(--white-color); padding: 1.5rem 2rem;
+             border-top-left-radius: 8px; border-top-right-radius: 8px;
+        }
+        header h1 { font-size: 1.75rem; margin: 0; }
+        .content-wrapper { padding: 2rem; }
+        .history-container { margin-bottom: 2rem; }
+        .history-container h2 {
+            font-size: 1.1rem; color: var(--secondary-color); border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.5rem; margin-bottom: 1rem;
+        }
+        #history-log {
+            list-style-type: none; padding-left: 0; margin: 0;
+            font-size: 0.95rem; max-height: 300px; overflow-y: auto;
+        }
+        .log-item {
+            display: flex; align-items: flex-start; margin-bottom: 1rem;
+        }
+        .step-number {
+            font-weight: bold; color: var(--primary-color); background-color: #e6f7ff; border-radius: 50%;
+            width: 24px; height: 24px; min-width: 24px;
+            display: inline-flex; align-items: center; justify-content: center; margin-right: 12px;
+        }
+        .log-content { flex-grow: 1; }
+        .question-text { color: #333; display: block; }
+        .choice-section {
+            margin-top: 0.5rem; display: flex; align-items: center; flex-wrap: wrap;
+        }
+        .choice-text {
+            font-weight: bold; padding: 2px 8px; border-radius: 4px; color: white;
+        }
+        .choice-yes { background-color: var(--success-color); }
+        .choice-no { background-color: var(--danger-color); }
+        .remark-text {
+            margin-left: 10px; padding: 4px 8px; background-color: #eee;
+            border-radius: 4px; font-style: italic; color: #555;
+            border-left: 3px solid var(--secondary-color);
+        }
+        .log-connector {
+            width: 100%; text-align: center; color: var(--border-color);
+            font-size: 1.5rem; line-height: 0.5; margin-bottom: 0.5rem;
+        }
+        .final-result-log {
+            background-color: #e6f7ff; border: 1px solid #91d5ff; padding: 1rem;
+            border-radius: 4px; font-weight: bold; color: var(--primary-color);
+            margin-top: -1rem;
+        }
+        .flowchart-step fieldset {
+            border: 2px solid var(--primary-color); border-radius: 6px; padding: 1.5rem; background-color: #f8f9fa;
+        }
+        .flowchart-step legend {
+            font-weight: bold; padding: 0 0.5em; font-size: 1.1rem; color: var(--primary-color);
+        }
+        #node-display {
+            font-size: 1.3rem; line-height: 1.6; min-height: 100px; display: flex;
+            align-items: center; justify-content: center; text-align: center; margin-bottom: 1rem;
+        }
+        .remark-input-container { margin-bottom: 1.5rem; text-align: center; }
+        #remark-input {
+            width: 80%; padding: 8px 12px; border: 1px solid var(--border-color);
+            border-radius: 4px; font-size: 0.95rem;
+        }
+        #remark-input:focus {
+            outline: none; border-color: var(--primary-color); box-shadow: 0 0 0 2px rgba(0, 90, 156, 0.2);
+        }
+        .controls { display: flex; justify-content: space-between; }
+        .controls button, .footer-controls button {
+            font-size: 1rem; padding: 0.75rem 0; border-radius: 5px; border: 1px solid;
+            cursor: pointer; transition: all 0.2s ease-in-out; font-weight: 500; width: 48%;
+        }
+        #yes-btn { background-color: var(--success-color); color: var(--white-color); border-color: var(--success-color); }
+        #no-btn { background-color: var(--danger-color); color: var(--white-color); border-color: var(--danger-color);}
+        #yes-btn:hover { background-color: #157347; border-color: #146c43; }
+        #no-btn:hover { background-color: #bb2d3b; border-color: #b02a37; }
+        .footer-controls {
+            margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--border-color);
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .footer-controls .btn-group { display: flex; gap: 1rem; flex-wrap: wrap; }
+        .footer-controls button { width: auto; padding: 0.5rem 1.2rem; }
+        #back-btn, #restart-btn { background-color: var(--white-color); color: var(--secondary-color); border-color: var(--secondary-color); }
+        #export-btn { background-color: var(--white-color); color: var(--info-color); border-color: var(--info-color); }
+        #back-btn:hover, #restart-btn:hover { background-color: #e9ecef; }
+        #export-btn:hover { background-color: #cff4fc; }
+        #back-btn:disabled, #export-btn:disabled { background-color: #e9ecef; cursor: not-allowed; opacity: 0.7; border-color: var(--border-color); color: var(--secondary-color); }
+        .footer-controls a { color: var(--primary-color); text-decoration: none; font-size: 0.9rem; }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <header><h1>2.29 躯体疾病作为病因</h1></header>
+        <div class="content-wrapper">
+            <div class="history-container">
+                <h2>诊断路径</h2>
+                <ul id="history-log"><li>开始诊断...</li></ul>
+            </div>
+            <div id="flowchart-container">
+                <div class="flowchart-step">
+                    <fieldset>
+                        <legend>当前步骤</legend>
+                        <div id="node-display"></div>
+                        <div id="remark-container" class="remark-input-container">
+                            <input type="text" id="remark-input" placeholder="添加备注 (可选)">
+                        </div>
+                        <div id="controls" class="controls">
+                            <button id="no-btn">否 (No)</button>
+                            <button id="yes-btn">是 (Yes)</button>
+                        </div>
+                    </fieldset>
+                </div>
+            </div>
+            <div class="footer-controls">
+                <div class="btn-group">
+                    <button id="back-btn">上一步</button>
+                    <button id="restart-btn">重新开始</button>
+                    <button id="export-btn">导出诊断报告</button>
+                </div>
+                <a href="index.html">返回主索引</a>
+            </div>
+        </div>
+    </div>
+    <script>
+        const treeData = [{"id": "start", "type": "question", "text": "以病程波动的注意和意识的紊乱为特征", "yes_target": "q1_sub", "no_target": "q2"}, {"id": "q1_sub", "type": "question", "text": "证据表明紊乱有一种以上的病因(如一般躯体疾病和物质中毒)", "yes_target": "result_multiple_etiologies_delirium", "no_target": "result_somatic_delirium"}, {"id": "result_multiple_etiologies_delirium", "type": "result", "text": "诊断: 由于多种病因所致的谵妄(3.16.1)"}, {"id": "result_somatic_delirium", "type": "result", "text": "诊断: 由于其他躯体疾病所致的谵妄(3.16.1)"}, {"id": "q2", "type": "question", "text": "有一个或更多认知领域(复杂注意、执行功能、学习和记忆、语言、知觉运动或社会认知)显著下降的证据, 最好通过心理测验或其他量化的评估来证实, 同时这些缺陷干扰了个体的独立性", "yes_target": "q2_sub", "no_target": "q3"}, {"id": "q2_sub", "type": "question", "text": "证据表明这种紊乱有一种以上的病因(如脑血管病和阿尔茨海默病)", "yes_target": "result_multiple_etiologies_neurocognitive", "no_target": "q2_sub2"}, {"id": "result_multiple_etiologies_neurocognitive", "type": "result", "text": "诊断: 由于多种病因所致的重度神经认知障碍(3.16.2)"}, {"id": "q2_sub2", "type": "question", "text": "隐匿起病且损害逐渐进展, 出现在已确诊的帕金森病中", "yes_target": "q2_sub2_a", "no_target": "q2_sub3"}, {"id": "q2_sub2_a", "type": "question", "text": "没有证据表明存在混合性病因, 并且病程是帕金森明确发生在神经认知障碍起病前", "yes_target": "result_parkinsons_neurocognitive", "no_target": "result_possible_parkinsons_neurocognitive"}, {"id": "result_parkinsons_neurocognitive", "type": "result", "text": "诊断: 可能由于帕金森病所致的重度神经认知障碍(首先编码G20帕金森氏病)(3.16.2)"}, {"id": "result_possible_parkinsons_neurocognitive", "type": "result", "text": "诊断: 可疑由于帕金森病所致的重度神经认知障碍(3.16.2)"}, {"id": "q2_sub3", "type": "question", "text": "症状出现在创伤性脑损伤后, 并经过急性损伤后脑症状的持续存在", "yes_target": "result_tbi_neurocognitive", "no_target": "q2_sub4"}, {"id": "result_tbi_neurocognitive", "type": "result", "text": "诊断: 由于创伤性脑损伤所致的重度神经认知障碍(3.16.2)"}, {"id": "q2_sub4", "type": "question", "text": "经证实HIV并且不能用继发性脑病如隐性球菌脑膜炎或脑球菌病来解释", "yes_target": "result_hiv_neurocognitive", "no_target": "q2_sub5"}, {"id": "result_hiv_neurocognitive", "type": "result", "text": "诊断: 由于HIV感染所致的重度神经认知障碍(首先编码B20 HIV感染)(3.16.2)"}, {"id": "q2_sub5", "type": "question", "text": "隐匿起病, 逐渐进展, 并有证据表明症状是亨廷顿氏病的直接后果", "yes_target": "result_huntingtons_neurocognitive", "no_target": "q2_sub6"}, {"id": "result_huntingtons_neurocognitive", "type": "result", "text": "诊断: 由于亨廷顿氏病所致的重度神经认知障碍(首先编码G10亨廷顿氏病)(3.16.2)"}, {"id": "q2_sub6", "type": "question", "text": "隐匿起病, 快速进展, 并有朊病毒病的生物标记物证据", "yes_target": "result_prion_neurocognitive", "no_target": "q2_sub7"}, {"id": "result_prion_neurocognitive", "type": "result", "text": "诊断: 由于朊病毒病所致的重度神经认知障碍(首先编码A81.9朊病毒病)(3.16.2)"}, {"id": "q2_sub7", "type": "question", "text": "隐匿起病, 逐渐进展, 并有行为症状(如脱抑制, 情感淡漠, 缺乏共情), 强迫行为, 口欲亢进)或语言能力的显著下降; 相对保留了学习、记忆和知觉运动的功能", "yes_target": "q2_sub7_a", "no_target": "q2_sub8"}, {"id": "q2_sub7_a", "type": "question", "text": "额颞叶神经认知障碍致病基因突变是发生成人或类似的额叶或颞叶萎缩的证据", "yes_target": "result_frontotemporal_neurocognitive", "no_target": "result_possible_frontotemporal_neurocognitive"}, {"id": "result_frontotemporal_neurocognitive", "type": "result", "text": "诊断: 可能的额颞叶神经认知障碍(首先编码额颞叶疾病)(3.16.2)"}, {"id": "result_possible_frontotemporal_neurocognitive", "type": "result", "text": "诊断: 可疑的额颞叶神经认知障碍(3.16.2)"}, {"id": "q2_sub8", "type": "question", "text": "隐匿起病且逐渐进展, 伴有以下任何一种表现: 波动性认知功能, 注意力和警觉性的显著变化, 反复出现完整的视幻觉; 出现帕金森综合征的特征表现; 快速眼动睡眠行为障碍; 或严重的神经阻滞剂敏感性", "yes_target": "q2_sub8_a", "no_target": "q2_sub9"}, {"id": "q2_sub8_a", "type": "question", "text": "有以下核心特征中的两个, 或一个核心特征和快速眼动睡眠行为障碍或一种或更多的指示性生物标记", "yes_target": "result_lewy_body_neurocognitive", "no_target": "result_possible_lewy_body_neurocognitive"}, {"id": "result_lewy_body_neurocognitive", "type": "result", "text": "诊断: 可能的重度神经认知障碍伴路易体(首先编码路易体病)(3.16.2)"}, {"id": "result_possible_lewy_body_neurocognitive", "type": "result", "text": "诊断: 可疑的重度神经认知障碍伴路易体(3.16.2)"}, {"id": "q2_sub9", "type": "question", "text": "存在脑血管病以及与血管性病因相一致的特征(如认知缺陷的起病与血管事件相关或有证据表明复杂注意和额叶执行功能显著下降)", "yes_target": "q2_sub9_a", "no_target": "q2_sub10"}, {"id": "q2_sub9_a", "type": "question", "text": "神经影像学支持脑实质的损伤是由于脑血管病所致, 神经认知综合征在时间上与一是有记录的脑血管事件相关, 或同时存在脑血管病和遗传学证据", "yes_target": "result_vascular_neurocognitive", "no_target": "result_possible_vascular_neurocognitive"}, {"id": "result_vascular_neurocognitive", "type": "result", "text": "诊断: 可能的重度血管性神经认知障碍(3.16.2)"}, {"id": "result_possible_vascular_neurocognitive", "type": "result", "text": "诊断: 可疑的重度血管性神经认知障碍(3.16.2)"}, {"id": "q2_sub10", "type": "question", "text": "隐匿起病, 在至少两个认知领域有逐渐进展的损害", "yes_target": "q2_sub10_a", "no_target": "q2_sub11"}, {"id": "q2_sub10_a", "type": "question", "text": "阿尔茨海默病的致病基因突变或在下列三项全部存在: 记忆和某个其他认知领域下降的确凿证据, 处于稳定期, 以及无证据表明存在混合性病因", "yes_target": "result_alzheimers_neurocognitive", "no_target": "result_possible_alzheimers_neurocognitive"}, {"id": "result_alzheimers_neurocognitive", "type": "result", "text": "诊断: 可能的由于阿尔茨海默病所致的重度神经认知障碍(首先编码阿尔茨海默病)(3.16.2)"}, {"id": "result_possible_alzheimers_neurocognitive", "type": "result", "text": "诊断: 可疑的由于阿尔茨海默病所致的重度神经认知障碍(3.16.2)"}, {"id": "q2_sub11", "type": "question", "text": "从病史、体格检查或实验室发现获得的其他躯体疾病(如多发性硬化症)是症状的病因", "yes_target": "result_other_somatic_neurocognitive", "no_target": "result_unspecified_neurocognitive"}, {"id": "result_other_somatic_neurocognitive", "type": "result", "text": "诊断: 由于其他躯体疾病所致的重度神经认知障碍(首先编码躯体疾病)(3.16.2)"}, {"id": "result_unspecified_neurocognitive", "type": "result", "text": "诊断: 未特定的神经认知障碍"}, {"id": "q3", "type": "question", "text": "与已证实的表现水平相比, 个体在一个或一定的认知领域下降, 但尚未干扰日常活动的独立性", "yes_target": "q3_sub", "no_target": "q4"}, {"id": "q3_sub", "type": "question", "text": "由于某种一般躯体疾病的直接效应所致", "yes_target": "result_somatic_mild_neurocognitive", "no_target": "result_unspecified_mild_neurocognitive"}, {"id": "result_somatic_mild_neurocognitive", "type": "result", "text": "诊断: 由于其他躯体疾病所致的轻度神经认知障碍(参见用于重度神经认知障碍的病因决策点)"}, {"id": "result_unspecified_mild_neurocognitive", "type": "result", "text": "诊断: 未特定的神经认知障碍"}, {"id": "q4", "type": "question", "text": "突出的妄想或幻觉", "yes_target": "result_somatic_psychotic", "no_target": "q5"}, {"id": "result_somatic_psychotic", "type": "result", "text": "诊断: 由于其他躯体疾病所致的精神病性障碍"}, {"id": "q5", "type": "question", "text": "突出且持续异常的心境高涨、膨胀和/或易激惹和异常增加的活动或精力占主导", "yes_target": "result_somatic_bipolar", "no_target": "q6"}, {"id": "result_somatic_bipolar", "type": "result", "text": "诊断: 由于其他躯体疾病所致的双相及相关障碍"}, {"id": "q6", "type": "question", "text": "突出且持续的抑郁心境或者兴趣或愉悦感的明显减退占主导", "yes_target": "result_somatic_depressive", "no_target": "q7"}, {"id": "result_somatic_depressive", "type": "result", "text": "诊断: 由于其他躯体疾病所致的抑郁障碍"}, {"id": "q7", "type": "question", "text": "突出的惊恐发作或焦虑", "yes_target": "result_somatic_anxiety", "no_target": "q8"}, {"id": "result_somatic_anxiety", "type": "result", "text": "诊断: 由于其他躯体疾病所致的焦虑障碍"}, {"id": "q8", "type": "question", "text": "突出的强迫思维、强迫行为, 对外貌的先占观念, 行为模式为搔抓皮肤、拔毛发、或其他的躯体导向的重复行为, 的其他典型症状", "yes_target": "result_somatic_ocd", "no_target": "q9"}, {"id": "result_somatic_ocd", "type": "result", "text": "诊断: 由于其他躯体疾病所致的强迫及相关障碍"}, {"id": "q9", "type": "question", "text": "至少有三个紧张症症状(如木僵、僵住、蜡样屈曲、违拗、作态、装相、刻板运动、激越、秽语症、模仿言语或模仿动作)", "yes_target": "result_somatic_catatonia", "no_target": "q10"}, {"id": "result_somatic_catatonia", "type": "result", "text": "诊断: 由于其他躯体疾病所致的紧张症障碍(3.2.5)"}, {"id": "q10", "type": "question", "text": "与先前人格模式相比发生的变化", "yes_target": "result_somatic_personality", "no_target": "q11"}, {"id": "result_somatic_personality", "type": "result", "text": "诊断: 由于其他躯体疾病所致的人格改变(3.17.11)"}, {"id": "q11", "type": "question", "text": "上述未涵盖的有临床意义的症状源于上句一般躯体疾病的生理效应, 代表了个体在心理上或生物学上的功能失调", "yes_target": "result_other_somatic_psychiatric", "no_target": "q12"}, {"id": "result_other_somatic_psychiatric", "type": "result", "text": "诊断: 由于其他躯-体疾病所致的其他特定的精神障碍"}, {"id": "q12", "type": "result", "text": "诊断: 无精神障碍(症状无临床意义)"}];
+        const pageTitle = "2.29 躯体疾病作为病因";
+        const startNodeId = 'start';
+        let currentNode;
+        let history = [];
+        const nodeDisplay = document.getElementById('node-display');
+        const flowchartContainer = document.getElementById('flowchart-container');
+        const controlsDiv = document.getElementById('controls');
+        const remarkContainer = document.getElementById('remark-container');
+        const remarkInput = document.getElementById('remark-input');
+        const yesBtn = document.getElementById('yes-btn');
+        const noBtn = document.getElementById('no-btn');
+        const backBtn = document.getElementById('back-btn');
+        const restartBtn = document.getElementById('restart-btn');
+        const exportBtn = document.getElementById('export-btn');
+        const historyLog = document.getElementById('history-log');
+        function findNodeById(id) { return treeData.find(node => node.id === id); }
+        function buildHistoryTree(path, finalNode) {
+            if (path.length === 0 && !finalNode) { return '<li>开始诊断...</li>'; }
+            let html = '';
+            path.forEach((step, index) => {
+                const node = findNodeById(step.nodeId);
+                const choiceText = step.choice === 'yes' ? '是' : '否';
+                const choiceClass = step.choice === 'yes' ? 'choice-yes' : 'choice-no';
+                html += `<li class="log-item"><div class="step-number">${index + 1}</div><div class="log-content"><div class="question-text">"${node.text}"</div><div class="choice-section"><span class="choice-text ${choiceClass}">${choiceText}</span>`;
+                if (step.remark) { html += `<div class="remark-text">${step.remark}</div>`; }
+                html += `</div></div></li><div class="log-connector">↓</div>`;
+            });
+            if (finalNode && finalNode.type === 'result') { html += `<div class="final-result-log">${finalNode.text}</div>`; }
+            return html;
+        }
+        function updateHistoryDisplay() {
+            historyLog.innerHTML = buildHistoryTree(history, currentNode);
+            historyLog.scrollTop = historyLog.scrollHeight;
+        }
+        function updateButtonStates() {
+            backBtn.disabled = history.length === 0;
+            exportBtn.disabled = history.length === 0 || !currentNode || currentNode.type !== 'result';
+        }
+        function showNode(nodeId) {
+            currentNode = findNodeById(nodeId);
+            if (!currentNode) {
+                nodeDisplay.textContent = '错误：未找到节点 ' + nodeId;
+                flowchartContainer.style.display = 'none';
+                return;
+            }
+            updateHistoryDisplay();
+            updateButtonStates();
+            if (currentNode.type === 'question') {
+                nodeDisplay.textContent = currentNode.text;
+                flowchartContainer.style.display = 'block';
+            } else {
+                flowchartContainer.style.display = 'none';
+            }
+        }
+        function makeChoice(isYes) {
+            if (!currentNode) return;
+            const choice = isYes ? 'yes' : 'no';
+            const remark = remarkInput.value.trim();
+            history.push({ nodeId: currentNode.id, choice: choice, remark: remark });
+            remarkInput.value = '';
+            const nextNodeId = isYes ? currentNode.yes_target : currentNode.no_target;
+            showNode(nextNodeId);
+        }
+        function generateReportText() {
+            let report = `DSM-5® 鉴别诊断报告\n====================================\n`;
+            report += `决策树: ${pageTitle}\n生成时间: ${new Date().toLocaleString('zh-CN')}\n====================================\n\n`;
+            history.forEach((step, index) => {
+                const node = findNodeById(step.nodeId);
+                const choiceText = step.choice === 'yes' ? '是' : '否';
+                report += `步骤 ${index + 1}: \n  - 问题: ${node.text}\n  - 选择: ${choiceText}\n`;
+                if (step.remark) { report += `  - 备注: ${step.remark}\n`; }
+                report += `\n`;
+            });
+            if (currentNode && currentNode.type === 'result') { report += `最终诊断/结论:\n  - ${currentNode.text}\n`; }
+            return report;
+        }
+        function exportReport() {
+            if (exportBtn.disabled) return;
+            const reportText = generateReportText();
+            const blob = new Blob([reportText], { type: 'text/plain;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+            a.download = `DSM5_Report_${timestamp}.txt`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+        yesBtn.addEventListener('click', () => makeChoice(true));
+        noBtn.addEventListener('click', () => makeChoice(false));
+        exportBtn.addEventListener('click', exportReport);
+        backBtn.addEventListener('click', () => {
+            if (history.length > 0) {
+                const lastStep = history.pop();
+                showNode(lastStep.nodeId);
+                remarkInput.value = lastStep.remark || '';
+            }
+        });
+        restartBtn.addEventListener('click', () => {
+            history = [];
+            remarkInput.value = '';
+            showNode(startNodeId);
+        });
+        showNode(startNodeId);
+    </script>
+</body>
+</html>

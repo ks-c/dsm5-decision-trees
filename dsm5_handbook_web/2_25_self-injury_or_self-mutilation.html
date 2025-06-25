@@ -1,0 +1,252 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2.25 自伤或自残</title>
+    <style>
+        :root { --primary-color: #005A9C; --secondary-color: #6c757d; --success-color: #198754; --danger-color: #dc3545; --info-color: #0dcaf0;
+            --light-bg: #f0f2f5; --border-color: #d9d9d9; --text-color: #333; --white-color: #ffffff;
+        }
+        body {
+            font-family: "PingFang SC", "Helvetica Neue", Helvetica, Arial, "Microsoft Yahei", sans-serif;
+            background-color: var(--light-bg); color: var(--text-color); margin: 0; padding: 2rem;
+            display: flex; justify-content: center;
+        }
+        .main-container {
+            width: 100%; max-width: 900px; background-color: var(--white-color);
+            border: 1px solid var(--border-color); border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+        header {
+             background-color: var(--primary-color); color: var(--white-color); padding: 1.5rem 2rem;
+             border-top-left-radius: 8px; border-top-right-radius: 8px;
+        }
+        header h1 { font-size: 1.75rem; margin: 0; }
+        .content-wrapper { padding: 2rem; }
+        .history-container { margin-bottom: 2rem; }
+        .history-container h2 {
+            font-size: 1.1rem; color: var(--secondary-color); border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.5rem; margin-bottom: 1rem;
+        }
+        #history-log {
+            list-style-type: none; padding-left: 0; margin: 0;
+            font-size: 0.95rem; max-height: 300px; overflow-y: auto;
+        }
+        .log-item {
+            display: flex; align-items: flex-start; margin-bottom: 1rem;
+        }
+        .step-number {
+            font-weight: bold; color: var(--primary-color); background-color: #e6f7ff; border-radius: 50%;
+            width: 24px; height: 24px; min-width: 24px;
+            display: inline-flex; align-items: center; justify-content: center; margin-right: 12px;
+        }
+        .log-content { flex-grow: 1; }
+        .question-text { color: #333; display: block; }
+        .choice-section {
+            margin-top: 0.5rem; display: flex; align-items: center; flex-wrap: wrap;
+        }
+        .choice-text {
+            font-weight: bold; padding: 2px 8px; border-radius: 4px; color: white;
+        }
+        .choice-yes { background-color: var(--success-color); }
+        .choice-no { background-color: var(--danger-color); }
+        .remark-text {
+            margin-left: 10px; padding: 4px 8px; background-color: #eee;
+            border-radius: 4px; font-style: italic; color: #555;
+            border-left: 3px solid var(--secondary-color);
+        }
+        .log-connector {
+            width: 100%; text-align: center; color: var(--border-color);
+            font-size: 1.5rem; line-height: 0.5; margin-bottom: 0.5rem;
+        }
+        .final-result-log {
+            background-color: #e6f7ff; border: 1px solid #91d5ff; padding: 1rem;
+            border-radius: 4px; font-weight: bold; color: var(--primary-color);
+            margin-top: -1rem;
+        }
+        .flowchart-step fieldset {
+            border: 2px solid var(--primary-color); border-radius: 6px; padding: 1.5rem; background-color: #f8f9fa;
+        }
+        .flowchart-step legend {
+            font-weight: bold; padding: 0 0.5em; font-size: 1.1rem; color: var(--primary-color);
+        }
+        #node-display {
+            font-size: 1.3rem; line-height: 1.6; min-height: 100px; display: flex;
+            align-items: center; justify-content: center; text-align: center; margin-bottom: 1rem;
+        }
+        .remark-input-container { margin-bottom: 1.5rem; text-align: center; }
+        #remark-input {
+            width: 80%; padding: 8px 12px; border: 1px solid var(--border-color);
+            border-radius: 4px; font-size: 0.95rem;
+        }
+        #remark-input:focus {
+            outline: none; border-color: var(--primary-color); box-shadow: 0 0 0 2px rgba(0, 90, 156, 0.2);
+        }
+        .controls { display: flex; justify-content: space-between; }
+        .controls button, .footer-controls button {
+            font-size: 1rem; padding: 0.75rem 0; border-radius: 5px; border: 1px solid;
+            cursor: pointer; transition: all 0.2s ease-in-out; font-weight: 500; width: 48%;
+        }
+        #yes-btn { background-color: var(--success-color); color: var(--white-color); border-color: var(--success-color); }
+        #no-btn { background-color: var(--danger-color); color: var(--white-color); border-color: var(--danger-color);}
+        #yes-btn:hover { background-color: #157347; border-color: #146c43; }
+        #no-btn:hover { background-color: #bb2d3b; border-color: #b02a37; }
+        .footer-controls {
+            margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--border-color);
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .footer-controls .btn-group { display: flex; gap: 1rem; flex-wrap: wrap; }
+        .footer-controls button { width: auto; padding: 0.5rem 1.2rem; }
+        #back-btn, #restart-btn { background-color: var(--white-color); color: var(--secondary-color); border-color: var(--secondary-color); }
+        #export-btn { background-color: var(--white-color); color: var(--info-color); border-color: var(--info-color); }
+        #back-btn:hover, #restart-btn:hover { background-color: #e9ecef; }
+        #export-btn:hover { background-color: #cff4fc; }
+        #back-btn:disabled, #export-btn:disabled { background-color: #e9ecef; cursor: not-allowed; opacity: 0.7; border-color: var(--border-color); color: var(--secondary-color); }
+        .footer-controls a { color: var(--primary-color); text-decoration: none; font-size: 0.9rem; }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <header><h1>2.25 自伤或自残</h1></header>
+        <div class="content-wrapper">
+            <div class="history-container">
+                <h2>诊断路径</h2>
+                <ul id="history-log"><li>开始诊断...</li></ul>
+            </div>
+            <div id="flowchart-container">
+                <div class="flowchart-step">
+                    <fieldset>
+                        <legend>当前步骤</legend>
+                        <div id="node-display"></div>
+                        <div id="remark-container" class="remark-input-container">
+                            <input type="text" id="remark-input" placeholder="添加备注 (可选)">
+                        </div>
+                        <div id="controls" class="controls">
+                            <button id="no-btn">否 (No)</button>
+                            <button id="yes-btn">是 (Yes)</button>
+                        </div>
+                    </fieldset>
+                </div>
+            </div>
+            <div class="footer-controls">
+                <div class="btn-group">
+                    <button id="back-btn">上一步</button>
+                    <button id="restart-btn">重新开始</button>
+                    <button id="export-btn">导出诊断报告</button>
+                </div>
+                <a href="index.html">返回主索引</a>
+            </div>
+        </div>
+    </div>
+    <script>
+        const treeData = [{"id": "start", "type": "question", "text": "失败的自杀企图的一部分", "yes_target": "result_suicidal_ref", "no_target": "q2"}, {"id": "result_suicidal_ref", "type": "result", "text": "结论: 参见用于鉴别诊断的自杀观念或行为树形图(2.11)"}, {"id": "q2", "type": "question", "text": "文化上认可的行为(如穿环)", "yes_target": "result_normal_cultural", "no_target": "q3"}, {"id": "result_normal_cultural", "type": "result", "text": "结论: “正常的”自残"}, {"id": "q3", "type": "question", "text": "由于某种物质(包括药物)的生理效应所致", "yes_target": "q3_sub", "no_target": "q4"}, {"id": "q3_sub", "type": "question", "text": "认知损害或精神病性症状是直接后果", "yes_target": "result_substance_neuro_psych", "no_target": "result_substance_intox_withdrawal"}, {"id": "result_substance_neuro_psych", "type": "result", "text": "诊断: 物质/药物所致的重度神经认知障碍(3.16.2), 物质中毒性谵妄(3.16.1), 物质戒断性谵妄(3.16.1), 药物所致的谵妄(3.16.1), 物质所致的精神病性障碍"}, {"id": "result_substance_intox_withdrawal", "type": "result", "text": "诊断: 物质中毒, 物质戒断, 其他的药物不良反应"}, {"id": "q4", "type": "question", "text": "由于某种一般躯体疾病所致的生理效应", "yes_target": "q4_sub", "no_target": "q5"}, {"id": "q4_sub", "type": "question", "text": "认知损害(如意识错乱)或精神病性症状的直接后果", "yes_target": "result_somatic_neuro_psych", "no_target": "result_somatic_personality"}, {"id": "result_somatic_neuro_psych", "type": "result", "text": "诊断: 由于其他躯体疾病所致的神经认知障碍(3.16.2), 谵妄(3.16.1), 或“耳气沉沉”的感觉, 或精神病性症状的直接后果"}, {"id": "result_somatic_personality", "type": "result", "text": "诊断: 由于其他躯体疾病所致的人格改变(3.17.11)"}, {"id": "q5", "type": "question", "text": "自伤动机是降低烦躁、宣泄愤怒的感觉, 或麻木或“耳气沉沉”的感觉, 与一种冲动及身份紊乱的模式有关", "yes_target": "result_bpd", "no_target": "q6"}, {"id": "result_bpd", "type": "result", "text": "诊断: 边缘型人格障碍(3.17.5)"}, {"id": "q6", "type": "question", "text": "作为对妄想或命令性幻觉的反应", "yes_target": "result_psychotic_ref", "no_target": "q7"}, {"id": "result_psychotic_ref", "type": "result", "text": "诊断: 精神病性障碍 [如精神分裂症(3.2.1)]。参见用于鉴别诊断的妄想(2.5)或幻觉(2.6)树形图"}, {"id": "q7", "type": "question", "text": "强迫行为的后果(如频繁地剔刮洗手)", "yes_target": "result_ocd", "no_target": "q8"}, {"id": "result_ocd", "type": "result", "text": "诊断: 强迫症(3.6.1)"}, {"id": "q8", "type": "question", "text": "与反复拔除毛发有关, 导致脱发", "yes_target": "result_trichotillomania", "no_target": "q9"}, {"id": "result_trichotillomania", "type": "result", "text": "诊断: 拔毛癖(拔毛障碍)(3.6.4)"}, {"id": "q9", "type": "question", "text": "与反复搔抓皮肤有关, 导致皮肤破损", "yes_target": "result_excoriation", "no_target": "q10"}, {"id": "result_excoriation", "type": "result", "text": "诊断: 抓痕(皮肤搔抓)障碍(3.6.5)"}, {"id": "q10", "type": "question", "text": "动机是获得愉悦感", "yes_target": "result_masochism", "no_target": "q11"}, {"id": "result_masochism", "type": "result", "text": "诊断: 性受虐障碍(3.18.1)"}, {"id": "q11", "type": "question", "text": "刻板运动的结果(如撞头)", "yes_target": "result_stereotypic_movement", "no_target": "q12"}, {"id": "result_stereotypic_movement", "type": "result", "text": "诊断: 刻板运动障碍"}, {"id": "q12", "type": "question", "text": "伪造的自伤", "yes_target": "q12_sub", "no_target": "q13"}, {"id": "q12_sub", "type": "question", "text": "在没有明显的外部奖赏时, 是欺骗行为也是显而易见的", "yes_target": "result_factitious", "no_target": "result_malingering"}, {"id": "result_factitious", "type": "result", "text": "诊断: 做作性障碍(3.9.5)"}, {"id": "result_malingering", "type": "result", "text": "诊断: 诈病"}, {"id": "q13", "type": "question", "text": "上述未涵盖的有临床意义的自伤行为代表了个体在心理上或生物学上的功能失调", "yes_target": "q13_sub", "no_target": "result_normal_self_harm"}, {"id": "q13_sub", "type": "question", "text": "作为对应激源适应不良的反应", "yes_target": "result_adjustment", "no_target": "result_third_part_non_suicidal"}, {"id": "result_adjustment", "type": "result", "text": "诊断: 适应障碍(3.7.2)"}, {"id": "result_third_part_non_suicidal", "type": "result", "text": "诊断: 第三部分: 非自杀性自我伤害"}, {"id": "result_normal_self_harm", "type": "result", "text": "结论: “正常的”自伤行为"}];
+        const pageTitle = "2.25 自伤或自残";
+        const startNodeId = 'start';
+        let currentNode;
+        let history = [];
+        const nodeDisplay = document.getElementById('node-display');
+        const flowchartContainer = document.getElementById('flowchart-container');
+        const controlsDiv = document.getElementById('controls');
+        const remarkContainer = document.getElementById('remark-container');
+        const remarkInput = document.getElementById('remark-input');
+        const yesBtn = document.getElementById('yes-btn');
+        const noBtn = document.getElementById('no-btn');
+        const backBtn = document.getElementById('back-btn');
+        const restartBtn = document.getElementById('restart-btn');
+        const exportBtn = document.getElementById('export-btn');
+        const historyLog = document.getElementById('history-log');
+        function findNodeById(id) { return treeData.find(node => node.id === id); }
+        function buildHistoryTree(path, finalNode) {
+            if (path.length === 0 && !finalNode) { return '<li>开始诊断...</li>'; }
+            let html = '';
+            path.forEach((step, index) => {
+                const node = findNodeById(step.nodeId);
+                const choiceText = step.choice === 'yes' ? '是' : '否';
+                const choiceClass = step.choice === 'yes' ? 'choice-yes' : 'choice-no';
+                html += `<li class="log-item"><div class="step-number">${index + 1}</div><div class="log-content"><div class="question-text">"${node.text}"</div><div class="choice-section"><span class="choice-text ${choiceClass}">${choiceText}</span>`;
+                if (step.remark) { html += `<div class="remark-text">${step.remark}</div>`; }
+                html += `</div></div></li><div class="log-connector">↓</div>`;
+            });
+            if (finalNode && finalNode.type === 'result') { html += `<div class="final-result-log">${finalNode.text}</div>`; }
+            return html;
+        }
+        function updateHistoryDisplay() {
+            historyLog.innerHTML = buildHistoryTree(history, currentNode);
+            historyLog.scrollTop = historyLog.scrollHeight;
+        }
+        function updateButtonStates() {
+            backBtn.disabled = history.length === 0;
+            exportBtn.disabled = history.length === 0 || !currentNode || currentNode.type !== 'result';
+        }
+        function showNode(nodeId) {
+            currentNode = findNodeById(nodeId);
+            if (!currentNode) {
+                nodeDisplay.textContent = '错误：未找到节点 ' + nodeId;
+                flowchartContainer.style.display = 'none';
+                return;
+            }
+            updateHistoryDisplay();
+            updateButtonStates();
+            if (currentNode.type === 'question') {
+                nodeDisplay.textContent = currentNode.text;
+                flowchartContainer.style.display = 'block';
+            } else {
+                flowchartContainer.style.display = 'none';
+            }
+        }
+        function makeChoice(isYes) {
+            if (!currentNode) return;
+            const choice = isYes ? 'yes' : 'no';
+            const remark = remarkInput.value.trim();
+            history.push({ nodeId: currentNode.id, choice: choice, remark: remark });
+            remarkInput.value = '';
+            const nextNodeId = isYes ? currentNode.yes_target : currentNode.no_target;
+            showNode(nextNodeId);
+        }
+        function generateReportText() {
+            let report = `DSM-5® 鉴别诊断报告\n====================================\n`;
+            report += `决策树: ${pageTitle}\n生成时间: ${new Date().toLocaleString('zh-CN')}\n====================================\n\n`;
+            history.forEach((step, index) => {
+                const node = findNodeById(step.nodeId);
+                const choiceText = step.choice === 'yes' ? '是' : '否';
+                report += `步骤 ${index + 1}: \n  - 问题: ${node.text}\n  - 选择: ${choiceText}\n`;
+                if (step.remark) { report += `  - 备注: ${step.remark}\n`; }
+                report += `\n`;
+            });
+            if (currentNode && currentNode.type === 'result') { report += `最终诊断/结论:\n  - ${currentNode.text}\n`; }
+            return report;
+        }
+        function exportReport() {
+            if (exportBtn.disabled) return;
+            const reportText = generateReportText();
+            const blob = new Blob([reportText], { type: 'text/plain;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+            a.download = `DSM5_Report_${timestamp}.txt`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+        yesBtn.addEventListener('click', () => makeChoice(true));
+        noBtn.addEventListener('click', () => makeChoice(false));
+        exportBtn.addEventListener('click', exportReport);
+        backBtn.addEventListener('click', () => {
+            if (history.length > 0) {
+                const lastStep = history.pop();
+                showNode(lastStep.nodeId);
+                remarkInput.value = lastStep.remark || '';
+            }
+        });
+        restartBtn.addEventListener('click', () => {
+            history = [];
+            remarkInput.value = '';
+            showNode(startNodeId);
+        });
+        showNode(startNodeId);
+    </script>
+</body>
+</html>
