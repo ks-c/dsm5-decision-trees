@@ -1,0 +1,249 @@
+
+    <!DOCTYPE html>
+    <html lang="zh-CN">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>DSM-5® 鉴别诊断手册 - 决策树索引</title>
+        <style>
+            :root {{
+                --primary-color: #005A9C; --primary-dark: #004071; --light-bg: #f8f9fa;
+                --card-bg: #ffffff; --text-color: #212529; --text-secondary: #6c757d;
+                --border-color: #dee2e6;
+            }}
+            body {{
+                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+                background-color: var(--light-bg); color: var(--text-color); margin: 0;
+            }}
+            .main-wrapper {{
+                width: 100%; display: flex; justify-content: center;
+                padding: 4rem 1rem; box-sizing: border-box;
+            }}
+            .container {{ width: 100%; max-width: 1100px; }}
+            .header {{
+                text-align: left; margin-bottom: 2.5rem; border-bottom: 1px solid var(--border-color);
+                padding-bottom: 1.5rem;
+            }}
+            .header h1 {{
+                font-size: 2rem; margin: 0 0 0.25rem 0; font-weight: 600; color: var(--primary-dark);
+            }}
+            .header p {{ font-size: 1.1rem; margin: 0; color: var(--text-secondary); }}
+            .card-list {{ display: flex; flex-direction: column; gap: 1rem; }}
+            .card {{
+                background: var(--card-bg); border: 1px solid var(--border-color);
+                border-radius: 8px; transition: border-color 0.2s ease, box-shadow 0.2s ease;
+                display: block;
+            }}
+            .card.disabled {{ background-color: #fcfcfc; opacity: 0.6; }}
+            .card:not(.disabled) {{ cursor: pointer; }}
+            .card:not(.disabled):hover {{
+                border-color: var(--primary-color); box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+            }}
+            .card a {{
+                text-decoration: none; color: inherit; display: block; padding: 1.5rem;
+            }}
+            .card.disabled a {{ pointer-events: none; }}
+            .item-title {{
+                font-size: 1.1rem; font-weight: 500; color: var(--text-color);
+                margin: 0 0 0.5rem 0;
+            }}
+            .item-desc {{
+                font-size: 0.85rem; color: var(--text-secondary); line-height: 1.6; margin: 0;
+            }}
+            @media (max-width: 600px) {{
+                .main-wrapper {{ padding: 2rem 1rem; }}
+                .header h1 {{ font-size: 1.5rem; }}
+                .header p {{ font-size: 1rem; }}
+                .card a {{ padding: 1.25rem; }}
+            }}
+        </style>
+    </head>
+    <body>
+        <div class="main-wrapper">
+            <div class="container">
+                <header class="header">
+                    <h1>DSM-5® 交互式鉴别诊断</h1>
+                    <p>基于《鉴别诊断手册》第二章：用树形图做鉴别诊断</p>
+                </header>
+                <div class="card-list">
+    
+                    <div class="card">
+                        <a href="2_1_poor_school_performance.html">
+                            <h3 class="item-title">2.1 不良学校表现</h3>
+                            <p class="item-desc">评估与儿童或青少年学校表现不佳相关的潜在精神障碍。</p>
+                        </a>
+                    </div>
+                    <div class="card">
+                        <a href="2_2_behavioral_problems.html">
+                            <h3 class="item-title">2.2 儿童或青少年中的行为问题</h3>
+                            <p class="item-desc">评估儿童或青少年中出现的各类行为问题的鉴别诊断。</p>
+                        </a>
+                    </div>
+                    <div class="card">
+                        <a href="2_3_language_disorders.html">
+                            <h3 class="item-title">2.3 语言紊乱</h3>
+                            <p class="item-desc">对各种类型的语言紊乱进行鉴别诊断，包括其成因和表现。</p>
+                        </a>
+                    </div>
+                    <div class="card">
+                        <a href="2_4_distractibility.html">
+                            <h3 class="item-title">2.4 随境转移</h3>
+                            <p class="item-desc">鉴别随境转移（分心）的各种可能原因。</p>
+                        </a>
+                    </div>
+                    <div class="card">
+                        <a href="2_5_delusions.html">
+                            <h3 class="item-title">2.5 妄想</h3>
+                            <p class="item-desc">对不同类型的妄想及其相关精神障碍进行鉴别。</p>
+                        </a>
+                    </div>
+                    <div class="card">
+                        <a href="2_6_hallucinations.html">
+                            <h3 class="item-title">2.6 幻觉</h3>
+                            <p class="item-desc">鉴别不同感官的幻觉体验及其潜在诊断。</p>
+                        </a>
+                    </div>
+                    <div class="card">
+                        <a href="2_7_catatonic_symptoms.html">
+                            <h3 class="item-title">2.7 紧张症症状</h3>
+                            <p class="item-desc">评估和鉴别紧张症状态的病因。</p>
+                        </a>
+                    </div>
+                    <div class="card">
+                        <a href="2_8_elevated_or_expansive_mood.html">
+                            <h3 class="item-title">2.8 高涨或膨胀的心境</h3>
+                            <p class="item-desc">鉴别躁狂、轻躁狂及相关心境状态。</p>
+                        </a>
+                    </div>
+                    <div class="card">
+                        <a href="2_9_irritable_mood.html">
+                            <h3 class="item-title">2.9 易激惹心境</h3>
+                            <p class="item-desc">对易激惹心境的多种可能精神障碍进行区分。</p>
+                        </a>
+                    </div>
+                    <div class="card">
+                        <a href="2_10_depressed_mood.html">
+                            <h3 class="item-title">2.10 抑郁心境</h3>
+                            <p class="item-desc">系统性地鉴别各种类型的抑郁障碍。</p>
+                        </a>
+                    </div>
+                    <div class="card disabled">
+                        <a href="javascript:void(0);">
+                            <h3 class="item-title">2.11 自杀观念或行为</h3>
+                            <p class="item-desc">评估与自杀观念或行为相关的精神状况。</p>
+                        </a>
+                    </div>
+                    <div class="card disabled">
+                        <a href="javascript:void(0);">
+                            <h3 class="item-title">2.12 精神运动性迟滞</h3>
+                            <p class="item-desc">鉴别导致精神运动迟滞的各种原因。</p>
+                        </a>
+                    </div>
+                    <div class="card disabled">
+                        <a href="javascript:void(0);">
+                            <h3 class="item-title">2.13 焦虑</h3>
+                            <p class="item-desc">对广泛的焦虑症状进行系统性鉴别诊断。</p>
+                        </a>
+                    </div>
+                    <div class="card disabled">
+                        <a href="javascript:void(0);">
+                            <h3 class="item-title">2.14 惊恐发作</h3>
+                            <p class="item-desc">鉴别原发性与继发性惊恐发作。</p>
+                        </a>
+                    </div>
+                    <div class="card disabled">
+                        <a href="javascript:void(0);">
+                            <h3 class="item-title">2.15 回避行为</h3>
+                            <p class="item-desc">区分不同原因导致的回避行为。</p>
+                        </a>
+                    </div>
+                    <div class="card disabled">
+                        <a href="javascript:void(0);">
+                            <h3 class="item-title">2.16 病因涉及创伤或心理社会应激源</h3>
+                            <p class="item-desc">鉴别与创伤和应激相关的障碍。</p>
+                        </a>
+                    </div>
+                    <div class="card disabled">
+                        <a href="javascript:void(0);">
+                            <h3 class="item-title">2.17 躯体主诉或疾病/外貌焦虑</h3>
+                            <p class="item-desc">评估以躯体症状或健康焦虑为主要表现的障碍。</p>
+                        </a>
+                    </div>
+                    <div class="card disabled">
+                        <a href="javascript:void(0);">
+                            <h3 class="item-title">2.18 食欲改变或异常的进食行为</h3>
+                            <p class="item-desc">对各类进食障碍及相关的行为模式进行鉴别。</p>
+                        </a>
+                    </div>
+                    <div class="card disabled">
+                        <a href="javascript:void(0);">
+                            <h3 class="item-title">2.19 失眠</h3>
+                            <p class="item-desc">鉴别不同原因导致的失眠问题。</p>
+                        </a>
+                    </div>
+                    <div class="card disabled">
+                        <a href="javascript:void(0);">
+                            <h3 class="item-title">2.20 嗜睡</h3>
+                            <p class="item-desc">对日间过度思睡的各种病因进行区分。</p>
+                        </a>
+                    </div>
+                    <div class="card disabled">
+                        <a href="javascript:void(0);">
+                            <h3 class="item-title">2.21 女性性功能失调</h3>
+                            <p class="item-desc">评估和鉴别女性性功能障碍。</p>
+                        </a>
+                    </div>
+                    <div class="card disabled">
+                        <a href="javascript:void(0);">
+                            <h3 class="item-title">2.22 男性性功能失调</h3>
+                            <p class="item-desc">评估和鉴别男性性功能障碍。</p>
+                        </a>
+                    </div>
+                    <div class="card disabled">
+                        <a href="javascript:void(0);">
+                            <h3 class="item-title">2.23 攻击行为</h3>
+                            <p class="item-desc">对攻击行为的潜在精神病理原因进行鉴别。</p>
+                        </a>
+                    </div>
+                    <div class="card disabled">
+                        <a href="javascript:void(0);">
+                            <h3 class="item-title">2.24 冲动性或冲动控制问题</h3>
+                            <p class="item-desc">鉴别以冲动性为核心特征的多种障碍。</p>
+                        </a>
+                    </div>
+                    <div class="card disabled">
+                        <a href="javascript:void(0);">
+                            <h3 class="item-title">2.25 自伤或自残</h3>
+                            <p class="item-desc">评估非自杀性自伤行为及相关障碍。</p>
+                        </a>
+                    </div>
+                    <div class="card disabled">
+                        <a href="javascript:void(0);">
+                            <h3 class="item-title">2.26 过度物质使用</h3>
+                            <p class="item-desc">对物质使用障碍及其相关精神症状进行鉴别。</p>
+                        </a>
+                    </div>
+                    <div class="card disabled">
+                        <a href="javascript:void(0);">
+                            <h3 class="item-title">2.27 记忆丧失</h3>
+                            <p class="item-desc">鉴别不同类型的记忆障碍及其病因。</p>
+                        </a>
+                    </div>
+                    <div class="card disabled">
+                        <a href="javascript:void(0);">
+                            <h3 class="item-title">2.28 认知损害</h3>
+                            <p class="item-desc">对各种认知域的损害进行系统性评估。</p>
+                        </a>
+                    </div>
+                    <div class="card disabled">
+                        <a href="javascript:void(0);">
+                            <h3 class="item-title">2.29 躯体疾病作为病因</h3>
+                            <p class="item-desc">评估由一般躯体疾病直接导致的各种精神症状。</p>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+    </html>
+    
