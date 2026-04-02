@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>DSM-5® 鉴别诊断决策树</title>
+  <style>
+    :root {
+      --primary: #0ea5e9;
+      --primary-dark: #0284c7;
+      --bg: #f1f5f9;
+      --card: #ffffff;
+      --text: #0f172a;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+      --disabled-bg: #f8fafc;
+      --disabled-text: #94a3b8;
+      --shadow: 0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.06);
+      --shadow-hover: 0 10px 25px -5px rgba(0,0,0,0.1), 0 8px 10px -6px rgba(0,0,0,0.1);
+      --radius: 12px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+    .wrapper {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 3rem 1.5rem;
+    }
+    header {
+      margin-bottom: 2rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+    header h1 {
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 0.5rem;
+      letter-spacing: -0.02em;
+    }
+    header p {
+      color: var(--text-muted);
+      font-size: 1.05rem;
+    }
+    .list {
+      display: grid;
+      gap: 0.75rem;
+    }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.25rem 1.5rem;
+      transition: all 0.2s ease;
+      text-decoration: none;
+      color: inherit;
+      display: block;
+      box-shadow: var(--shadow);
+    }
+    .card:hover {
+      border-color: var(--primary);
+      box-shadow: var(--shadow-hover);
+      transform: translateY(-2px);
+    }
+    .card.disabled {
+      background: var(--disabled-bg);
+      border-color: var(--border);
+      opacity: 0.7;
+      cursor: not-allowed;
+      transform: none !important;
+      box-shadow: none;
+    }
+    .card.disabled:hover {
+      border-color: var(--border);
+    }
+    .title {
+      font-size: 1.05rem;
+      font-weight: 600;
+      margin-bottom: 0.35rem;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .card.disabled .title {
+      color: var(--disabled-text);
+    }
+    .desc {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+    .card.disabled .desc {
+      color: var(--disabled-text);
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 20px;
+      height: 20px;
+      border-radius: 6px;
+      background: #dbeafe;
+      color: var(--primary-dark);
+      font-size: 0.75rem;
+      font-weight: 600;
+      flex-shrink: 0;
+    }
+    .card.disabled .badge {
+      background: #f1f5f9;
+      color: var(--disabled-text);
+    }
+    .footer-note {
+      margin-top: 2.5rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border);
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+    .footer-note a {
+      color: var(--primary);
+      text-decoration: none;
+    }
+    .footer-note a:hover { text-decoration: underline; }
+
+    @media (max-width: 640px) {
+      .wrapper { padding: 2rem 1rem; }
+      header h1 { font-size: 1.5rem; }
+      header p { font-size: 1rem; }
+      .card { padding: 1rem 1.25rem; }
+      .title { font-size: 1rem; }
+      .desc { font-size: 0.85rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+    <header>
+      <h1>DSM-5® 交互式鉴别诊断决策树</h1>
+      <p>基于《DSM-5® 鉴别诊断手册》第二章 · 纯静态 · 零依赖</p>
+    </header>
+
+    <div class="list">
+      <a class="card" href="2_1_poor_school_performance.html">
+        <div class="title"><span class="badge">2.1</span>不良学校表现</div>
+        <div class="desc">评估与儿童或青少年学校表现不佳相关的潜在精神障碍。</div>
+      </a>
+      <a class="card" href="2_2_behavioral_problems.html">
+        <div class="title"><span class="badge">2.2</span>儿童或青少年中的行为问题</div>
+        <div class="desc">评估儿童或青少年中出现的各类行为问题的鉴别诊断。</div>
+      </a>
+      <a class="card" href="2_3_language_disorders.html">
+        <div class="title"><span class="badge">2.3</span>语言紊乱</div>
+        <div class="desc">对各种类型的语言紊乱进行鉴别诊断，包括其成因和表现。</div>
+      </a>
+      <a class="card" href="2_4_distractibility.html">
+        <div class="title"><span class="badge">2.4</span>随境转移</div>
+        <div class="desc">鉴别随境转移（分心）的各种可能原因。</div>
+      </a>
+      <a class="card" href="2_5_delusions.html">
+        <div class="title"><span class="badge">2.5</span>妄想</div>
+        <div class="desc">对不同类型的妄想及其相关精神障碍进行鉴别。</div>
+      </a>
+      <a class="card" href="2_6_hallucinations.html">
+        <div class="title"><span class="badge">2.6</span>幻觉</div>
+        <div class="desc">鉴别不同感官的幻觉体验及其潜在诊断。</div>
+      </a>
+      <a class="card" href="2_7_catatonic_symptoms.html">
+        <div class="title"><span class="badge">2.7</span>紧张症症状</div>
+        <div class="desc">评估和鉴别紧张症状态的病因。</div>
+      </a>
+      <a class="card" href="2_8_elevated_or_expansive_mood.html">
+        <div class="title"><span class="badge">2.8</span>高涨或膨胀的心境</div>
+        <div class="desc">鉴别躁狂、轻躁狂及相关心境状态。</div>
+      </a>
+      <a class="card" href="2_9_irritable_mood.html">
+        <div class="title"><span class="badge">2.9</span>易激惹心境</div>
+        <div class="desc">对易激惹心境的多种可能精神障碍进行区分。</div>
+      </a>
+      <a class="card" href="2_10_depressed_mood.html">
+        <div class="title"><span class="badge">2.10</span>抑郁心境</div>
+        <div class="desc">系统性地鉴别各种类型的抑郁障碍。</div>
+      </a>
+      <div class="card disabled">
+        <div class="title"><span class="badge">2.11</span>自杀观念或行为</div>
+        <div class="desc">评估与自杀观念或行为相关的精神状况。</div>
+      </div>
+      <div class="card disabled">
+        <div class="title"><span class="badge">2.12</span>精神运动性迟滞</div>
+        <div class="desc">鉴别导致精神运动迟滞的各种原因。</div>
+      </div>
+      <div class="card disabled">
+        <div class="title"><span class="badge">2.13</span>焦虑</div>
+        <div class="desc">对广泛的焦虑症状进行系统性鉴别诊断。</div>
+      </div>
+      <div class="card disabled">
+        <div class="title"><span class="badge">2.14</span>惊恐发作</div>
+        <div class="desc">鉴别原发性与继发性惊恐发作。</div>
+      </div>
+      <div class="card disabled">
+        <div class="title"><span class="badge">2.15</span>回避行为</div>
+        <div class="desc">区分不同原因导致的回避行为。</div>
+      </div>
+      <div class="card disabled">
+        <div class="title"><span class="badge">2.16</span>病因涉及创伤或心理社会应激源</div>
+        <div class="desc">鉴别与创伤和应激相关的障碍。</div>
+      </div>
+      <div class="card disabled">
+        <div class="title"><span class="badge">2.17</span>躯体主诉或疾病/外貌焦虑</div>
+        <div class="desc">评估以躯体症状或健康焦虑为主要表现的障碍。</div>
+      </div>
+      <div class="card disabled">
+        <div class="title"><span class="badge">2.18</span>食欲改变或异常的进食行为</div>
+        <div class="desc">对各类进食障碍及相关的行为模式进行鉴别。</div>
+      </div>
+      <div class="card disabled">
+        <div class="title"><span class="badge">2.19</span>失眠</div>
+        <div class="desc">鉴别不同原因导致的失眠问题。</div>
+      </div>
+      <div class="card disabled">
+        <div class="title"><span class="badge">2.20</span>嗜睡</div>
+        <div class="desc">对日间过度思睡的各种病因进行区分。</div>
+      </div>
+      <div class="card disabled">
+        <div class="title"><span class="badge">2.21</span>女性性功能失调</div>
+        <div class="desc">评估和鉴别女性性功能障碍。</div>
+      </div>
+      <div class="card disabled">
+        <div class="title"><span class="badge">2.22</span>男性性功能失调</div>
+        <div class="desc">评估和鉴别男性性功能障碍。</div>
+      </div>
+      <div class="card disabled">
+        <div class="title"><span class="badge">2.23</span>攻击行为</div>
+        <div class="desc">对攻击行为的潜在精神病理原因进行鉴别。</div>
+      </div>
+      <div class="card disabled">
+        <div class="title"><span class="badge">2.24</span>冲动性或冲动控制问题</div>
+        <div class="desc">鉴别以冲动性为核心特征的多种障碍。</div>
+      </div>
+      <div class="card disabled">
+        <div class="title"><span class="badge">2.25</span>自伤或自残</div>
+        <div class="desc">评估非自杀性自伤行为及相关障碍。</div>
+      </div>
+      <div class="card disabled">
+        <div class="title"><span class="badge">2.26</span>过度物质使用</div>
+        <div class="desc">对物质使用障碍及其相关精神症状进行鉴别。</div>
+      </div>
+      <div class="card disabled">
+        <div class="title"><span class="badge">2.27</span>记忆丧失</div>
+        <div class="desc">鉴别不同类型的记忆障碍及其病因。</div>
+      </div>
+      <div class="card disabled">
+        <div class="title"><span class="badge">2.28</span>认知损害</div>
+        <div class="desc">对各种认知域的损害进行系统性评估。</div>
+      </div>
+      <div class="card disabled">
+        <div class="title"><span class="badge">2.29</span>躯体疾病作为病因</div>
+        <div class="desc">评估由一般躯体疾病直接导致的各种精神症状。</div>
+      </div>
+    </div>
+
+    <div class="footer-note">
+      项目开源 · <a href="https://github.com/ks-c/dsm5-decision-trees" target="_blank" rel="noopener">GitHub 仓库</a>
+    </div>
+  </div>
+</body>
+</html>
